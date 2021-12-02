@@ -8,5 +8,4 @@ class Train;
 
 
 
-
 #endif /* TRAIN_H */

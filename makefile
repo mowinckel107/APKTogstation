@@ -1,4 +1,4 @@
-SOURCES=main.cpp trainTrack.cpp train.cpp controlTower.cpp
+SOURCES=trainTrack.cpp train.cpp controlTower.cpp main.cpp 
 OBJECTS=$(addprefix $(BUILD_DIR)/, $(SOURCES:.cpp=.o))
 DEPS=$(addprefix $(BUILD_DIR)/, $(SOURCES:.cpp=.d))
 EXE=prog
