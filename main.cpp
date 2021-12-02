@@ -5,14 +5,21 @@
 
 #include <vector>
 
+#include "tests.h"
+
+
 int main()
 {
+    RunTests(); // Uncomment/Comment to run/not run the tests
 
-    std::vector<TrainTrack*> MyTraintracks;
 
-    TrainTrack MyTrainTrack(MyTraintracks);
-
-    
 
     return 0;
 }
+
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-SOURCES=trainTrack.cpp train.cpp controlTower.cpp main.cpp 
+SOURCES=main.cpp trainTrack.cpp train.cpp controlTower.cpp tests.cpp
 OBJECTS=$(addprefix $(BUILD_DIR)/, $(SOURCES:.cpp=.o))
 DEPS=$(addprefix $(BUILD_DIR)/, $(SOURCES:.cpp=.d))
 EXE=prog
@@ -14,6 +14,8 @@ endif
 
 all: $(BIN_DIR)/$(EXE)
 
+
+# Rule that checks dependencies and if there are changes then create the directiory if it does not already exist, and then compiles the .cpp files into .o files
 ${BIN_DIR}/$(EXE): $(DEPS) $(OBJECTS)  # << Check the $(DEPS) new dependency
 	mkdir	-p $(BIN_DIR) 
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS)

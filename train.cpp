@@ -4,8 +4,4 @@
 
 
 
-class Train
-{
 
-
-};

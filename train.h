@@ -3,7 +3,11 @@
 
 
 
-class Train;
+class Train
+{
+
+    
+};
 
 
 
