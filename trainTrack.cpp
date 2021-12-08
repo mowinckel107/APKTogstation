@@ -8,7 +8,7 @@
 
     TrainTrack::TrainTrack(std::vector<TrainTrack*> outgoingTraintracks)
     {
-
+        connectedTraintracks = outgoingTraintracks;
     }
 
     TrainTrack* TrainTrack::GetNextTrainTrack(unsigned int trainTrackNumber)
