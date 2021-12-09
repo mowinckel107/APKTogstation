@@ -1,7 +1,7 @@
 SOURCES=main.cpp trainTrack.cpp train.cpp controlTower.cpp tests.cpp 
 OBJECTS=$(addprefix $(BUILD_DIR)/, $(SOURCES:.cpp=.o))
 DEPS=$(addprefix $(BUILD_DIR)/, $(SOURCES:.cpp=.d))
-EXE=prog
+EXE=prog.exe
 CXXFLAGS=-I.
 
 # Making for host if no argument is provided, ie, "ARCH=null"
