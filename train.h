@@ -5,7 +5,8 @@
 
 class Train
 {
-    public:
+
+/*   public:
 		int ID; // Id på vogne
 		Container * ContainerOnTrain; // Olie, livestock, andet?
 		TrainTrack * CurrentTrack; // Hvis toget selv skal kunne køre nogen steder, må det nødvendigvis have en pointer til nuværende SPOR.
@@ -32,7 +33,7 @@ class Train
                                                       // Bemærk ny parameter.
 
         void Drive(); // Følg instruktioner.
-    
+*/ 
 };
 
 

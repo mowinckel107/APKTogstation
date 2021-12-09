@@ -2,7 +2,7 @@
 
 #include "train.h"
 
-
+/*
 Train::Train()
 {
     ID = 0;
@@ -70,3 +70,5 @@ void Train::MoveTrack(TrainTrack * Track)
     CurrentTrack = Track;
 
 }
+
+*/
