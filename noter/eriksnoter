@@ -1,0 +1,21 @@
+TODO:
+
+
+Create ControlTower
+
+Create a false Train class to test with.
+
+Implement the boost::signal2 code.
+
+When a Train is created, it sends a message to control tower, and gets a reply from control tower what route it should take (It gets a list of integers. Like "0,2,1,0,0" and at its second TrainTrack for example will ask for the TrainTrack it is on, for a pointer to TrainTrack 2.
+
+Trains can send messages that they are driving onto a TrainTrack or that they are leaving a TrainTrack.
+
+If a Train hears that another train will drive forward, it will wait until the train says it is leaving.
+
+The controltower does not communicate with the trains exept to give them their route. Instead, it changes who the Trains are suscribing to, and who they are broadcasting to. It does this without the trains knowledge.
+
+Controltower makes sure that a Train is always subscribed to messages about the next TrainTrack it is driving into.
+Controltower makes sure that Train is always broadcasting to Trains listening to messages about the TrainTrack that train is currently occupying.
+
+When a train leaves a TrainTrack and enters a new one, the ControlTower(Having heard the broadcast that the Train drove into a TrainTrack) will change who that Train is subscribed and broadcasting to.
