@@ -1,0 +1,44 @@
+(Mickels noter)
+
+TOGENE (som også er vogne)
+	- Fylder et spor
+	- Får afgangs og ankomst tidspunkter fra KONTROLHUS
+		Train::GetInstruction
+			- Nu: Beder kontrolhus om informationer
+			- Senere: Registrer SIGNAL2 signaler
+
+		Train::SetInstruction
+			- Anmoder kontrolhus om nye instruktioner (stiller sig i kø)
+
+	- Fortæller SPOR at den kører ind på dem (Track::EnterTrainTracks)
+		- Modtager EXCEPTION fra SPOR hvis sporet er taget. Bør (som noget nyt!) få en pointer ved success.
+
+	- Fortæller SPOR at den kører fra dem (Track::LeaveTrainTrack)
+
+	CONTAINER
+		- Egenskab ved hvert enkelt tog
+		- Én container per tog
+		- Påvirker fx aflastningstid
+		- Kan evt. påvirke hvad der printes på skærmen (fx A for én container, B for en anden)
+
+SPOR
+	- Indeholder ét tog
+	- Er forbundet med op til flere andre spor
+	- Der kan kun være ét tog per spor ad gangen.
+	- Har grafisk representation, der kan udskiftes med et tog
+
+	STATIONERNE
+		- Er specialiserede spor
+		- Må have flere tog/vogne, men har begrænsning
+			- Tjekker selv, ligesom spor tjekker om tog er kørt sammen
+
+		- Har ikke flere perroner
+		- Én perron med flere tog -> last in first out
+		- Man kunne evt.? placere flere stationer ved siden af hinanden. Så fungerer de som separate perroner.
+
+KONTROLHUS
+	- Modtager informationer om TOG og deres SPOR fra TOG
+	- Modtager informationer om aflastning fra STATIONER, som de giver videre til TOG
+	- Giver TOG afgangs og ankomst tidspunkter
+		- Er ansvarlig for at dette bliver gjort fornuftigt, både ift. stationer og spor.
+
