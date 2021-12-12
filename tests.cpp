@@ -13,6 +13,8 @@ void TestsOfTrainTrack3(void);
 
 void TestsOfTrain(void);
 
+
+
 void RunTests(void)
 {
 std::cout << "Starting Tests of TrainTrack:" << std::endl;
@@ -32,7 +34,8 @@ void TestsOfTrainTrack1(void)
 
     // Give TrainTrack2 an empty vector, as it leads to no other TrainTracks
     std::vector<TrainTrack*> emptyListOfTrainTracksForTrainTrack2;
-    TrainTrack myTrainTrack2(emptyListOfTrainTracksForTrainTrack2);
+
+    TrainTrack myTrainTrack2(emptyListOfTrainTracksForTrainTrack2, 2);
 
 
     // Step 2: Act
@@ -40,7 +43,8 @@ void TestsOfTrainTrack1(void)
     // Give TrainTrack1 a vector only containing a pointer to TrainTrack2
     std::vector<TrainTrack*> listOfTrainTracksForTrainTrack1;
     listOfTrainTracksForTrainTrack1.push_back(&myTrainTrack2);
-    TrainTrack myTrainTrack1(listOfTrainTracksForTrainTrack1);
+
+    TrainTrack myTrainTrack1(listOfTrainTracksForTrainTrack1, 2);
     }
     catch(...)
     {
@@ -60,12 +64,13 @@ void TestsOfTrainTrack2(void)
 
         // Give TrainTrack2 an empty vector, as it leads to no other TrainTracks
         std::vector<TrainTrack*> emptyListOfTrainTracksForTrainTrack2;
-        TrainTrack myTrainTrack2(emptyListOfTrainTracksForTrainTrack2);
+        TrainTrack myTrainTrack2(emptyListOfTrainTracksForTrainTrack2, 2);
 
         // Give TrainTrack1 a vector only containing a pointer to TrainTrack2
         std::vector<TrainTrack*> listOfTrainTracksForTrainTrack1;
         listOfTrainTracksForTrainTrack1.push_back(&myTrainTrack2);
-        TrainTrack myTrainTrack1(listOfTrainTracksForTrainTrack1);
+
+        TrainTrack myTrainTrack1(listOfTrainTracksForTrainTrack1, 1);
 
         // Create Train to use for exercising TrainTracks
         Train myTrain;
@@ -104,7 +109,7 @@ void TestsOfTrainTrack3(void)
 
         // Give myTrainTrack an empty vector, as it leads to no other TrainTracks
         std::vector<TrainTrack*> emptyListOfTrainTracksForTrainTrack;
-        TrainTrack myTrainTrack(emptyListOfTrainTracksForTrainTrack);
+        TrainTrack myTrainTrack(emptyListOfTrainTracksForTrainTrack, 0);
 
         // Create Trains to use for exercising TrainTracks
         Train myTrain1;

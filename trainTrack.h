@@ -9,14 +9,16 @@
 class TrainTrack
 {
     public:
-        TrainTrack(std::vector<TrainTrack*> outgoingTraintracks);
+        TrainTrack(std::vector<TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID);
         TrainTrack* GetNextTrainTrack(unsigned int trainTrackNumber);
         void EnterTrainTracks(Train* IncomingTrain);
         void LeaveTrainTrack(void);
+        unsigned int GetID(void);
 
     private:
         Train* TrainOnTrack = nullptr;
         std::vector<TrainTrack*> connectedTraintracks;
+        unsigned int ID;
 };
 
 // This class expands the TrainTrack class with the ability to unload trains
