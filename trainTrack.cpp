@@ -6,9 +6,10 @@
 #include <vector>
 
 
-    TrainTrack::TrainTrack(std::vector<TrainTrack*> outgoingTraintracks)
+    TrainTrack::TrainTrack(std::vector<TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID)
     {
         connectedTraintracks = outgoingTraintracks;
+        ID = uniqueTrainTrackID;
     }
 
     TrainTrack* TrainTrack::GetNextTrainTrack(unsigned int trainTrackNumber)
@@ -34,7 +35,10 @@
         TrainOnTrack = nullptr;
     }
 
-
+    unsigned int TrainTrack::GetID(void)
+    {
+        return ID;
+    }
 
 
 
