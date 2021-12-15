@@ -1,6 +1,3 @@
-
-
-
 #include "controlTower.h"
 
 
@@ -38,8 +35,8 @@ class FakeTrain : Train
 
 
 
-        TrainCommunication * ControlTower::GetRouteAndSignals(unsigned int startingTrainTrackID)
-        {
-            return nullptr;
-        }
+    TrainCommunication * ControlTower::GetRouteAndSignals(unsigned int startingTrainTrackID)
+    {
+        return nullptr;
+    }
 

@@ -1,9 +1,5 @@
-
 #include "trainTrack.h"
-#include "train.h"
 
-
-#include <vector>
 
 
     TrainTrack::TrainTrack(std::vector<TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID)

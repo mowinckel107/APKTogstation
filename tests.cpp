@@ -1,10 +1,6 @@
 #include "tests.h"
 
-#include "trainTrack.h"
-#include "train.h"
 
-#include <vector>
-#include <iostream>
 
 
 void TestsOfTrainTrack1(void);
