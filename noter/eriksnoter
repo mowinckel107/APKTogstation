@@ -3,9 +3,16 @@ TODO:
 
 Create ControlTower
 
-Create a false Train class to test with.
+Create a false Train class to test with. Needed parts of it can then be copied into train
 
 Implement the boost::signal2 code.
+
+
+
+
+
+
+
 
 When a Train is created, it sends a message to control tower, and gets a reply from control tower what route it should take (It gets a list of integers. Like "0,2,1,0,0" and at its second TrainTrack for example will ask for the TrainTrack it is on, for a pointer to TrainTrack 2.
 
