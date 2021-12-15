@@ -3,6 +3,8 @@
 #include "train.h"
 #include "controlTower.h"
 #include "container.h"
+#include "setup.h"
+
 
 #include <vector>
 #include <iostream>
@@ -24,6 +26,7 @@ int main()
     water.addCargo("water");
 
     std::cout << water.seeCargo() << std::endl;
+    TrainTrackHolder TheTrainTracks;
 
     return 0;
 }
