@@ -17,6 +17,4 @@ class TrainTrackHolder
 
 
 
-
-
 #endif /* SETUP_H */

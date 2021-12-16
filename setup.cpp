@@ -17,8 +17,8 @@ TrainTrackHolder::TrainTrackHolder(void)
     // platform2
     std::vector<TrainTrack*> ListOfTrainTracksForplatform2;
 
-    ListOfTrainTracksForplatform2.push_back(&trainInput1);
     ListOfTrainTracksForplatform2.push_back(&trainInput2);
+    ListOfTrainTracksForplatform2.push_back(&trainInput1);
 
     Platform platform2(ListOfTrainTracksForplatform2, 21);
     platforms.push_back(platform2);
@@ -26,6 +26,7 @@ TrainTrackHolder::TrainTrackHolder(void)
 
     // platform1
     std::vector<TrainTrack*> ListOfTrainTracksForplatform1;
+
     ListOfTrainTracksForplatform1.push_back(&trainInput1);
 
     Platform platform1(ListOfTrainTracksForplatform1, 20);
@@ -34,6 +35,7 @@ TrainTrackHolder::TrainTrackHolder(void)
 
     // trainTrack3
     std::vector<TrainTrack*> ListOfTrainTracksFortrainTrack3;
+
     ListOfTrainTracksFortrainTrack3.push_back(&platform2);
     ListOfTrainTracksFortrainTrack3.push_back(&platform1);
 
@@ -43,8 +45,9 @@ TrainTrackHolder::TrainTrackHolder(void)
 
     // trainTrack2
     std::vector<TrainTrack*> ListOfTrainTracksFortrainTrack2;
-    ListOfTrainTracksFortrainTrack2.push_back(&platform2);
+
     ListOfTrainTracksFortrainTrack2.push_back(&trainTrack3);
+    ListOfTrainTracksFortrainTrack2.push_back(&platform2);
 
     TrainTrack trainTrack2(ListOfTrainTracksFortrainTrack2, 11);
     trainTracks.push_back(trainTrack2);
@@ -52,6 +55,7 @@ TrainTrackHolder::TrainTrackHolder(void)
 
     // trainTrack1
     std::vector<TrainTrack*> ListOfTrainTracksFortrainTrack1;
+
     ListOfTrainTracksFortrainTrack1.push_back(&trainTrack3);
 
     TrainTrack trainTrack1(ListOfTrainTracksFortrainTrack1, 10);
@@ -60,6 +64,7 @@ TrainTrackHolder::TrainTrackHolder(void)
 
     // trainOutput3
     std::vector<TrainTrack*> ListOfTrainTracksFortrainOutput3;
+
     ListOfTrainTracksFortrainOutput3.push_back(&trainTrack2);
 
     TrainOutput trainOutput3(ListOfTrainTracksFortrainOutput3,0);
@@ -68,8 +73,9 @@ TrainTrackHolder::TrainTrackHolder(void)
 
     // trainOutput2
     std::vector<TrainTrack*> ListOfTrainTracksFortrainOutput2;
-    ListOfTrainTracksFortrainOutput2.push_back(&trainTrack1);
+
     ListOfTrainTracksFortrainOutput2.push_back(&trainTrack2);
+    ListOfTrainTracksFortrainOutput2.push_back(&trainTrack1);
 
     TrainOutput trainOutput2(ListOfTrainTracksFortrainOutput2,1);
     trainOutputs.push_back(trainOutput2);
@@ -77,6 +83,7 @@ TrainTrackHolder::TrainTrackHolder(void)
 
     // trainOutput1
     std::vector<TrainTrack*> ListOfTrainTracksFortrainOutput1;
+
     ListOfTrainTracksFortrainOutput1.push_back(&trainTrack1);
 
     TrainOutput trainOutput1(ListOfTrainTracksFortrainOutput1,2);
