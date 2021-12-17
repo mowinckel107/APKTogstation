@@ -69,7 +69,7 @@ void TestsOfTrainTrack2(void)
         TrainTrack myTrainTrack1(listOfTrainTracksForTrainTrack1, 1);
 
         // Create Train to use for exercising TrainTracks
-        Train myTrain;
+        Train myTrain(0, nullptr);
 
         // Variable to hold pointer to nextTrainTrack instead of controlTower or train
         TrainTrack * nextTrainTrack;
@@ -108,8 +108,8 @@ void TestsOfTrainTrack3(void)
         TrainTrack myTrainTrack(emptyListOfTrainTracksForTrainTrack, 0);
 
         // Create Trains to use for exercising TrainTracks
-        Train myTrain1;
-        Train myTrain2;
+        Train myTrain1(0,nullptr);
+        Train myTrain2(1,nullptr);
 
 
         // Step 2: Act

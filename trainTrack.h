@@ -4,6 +4,7 @@
 #include "train.h"
 #include <vector>
 
+class Train;
 
 // Basic traintracks. Allows 1, and only 1 train to stand on it, and have pointers to Traintracks further ahead
 class TrainTrack
