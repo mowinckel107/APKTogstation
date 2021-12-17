@@ -1,24 +1,15 @@
 #include "train.h"
 
 
-/*
-Train::Train()
-{
-    ID = 0;
-    CurrentTrack = nullptr;
-}
 
-Train::Train(int InputID, TrainTrack * Track)
+
+Train::Train(int InputID, TrainTrack * startingTrack)
 {
     ID = InputID;
-    CurrentTrack = nullptr;
-
-    if (Track != nullptr)
-    {
-        MoveTrack(Track);
-    }
+    CurrentTrack = startingTrack;
 }
 
+/*
 void Train::SetInstruction(Instruction * Ins)
 {
     CurrentInstruction = Ins;

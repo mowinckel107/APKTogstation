@@ -10,10 +10,6 @@ class FakeTrain : Train
         trainRoute = trainRouteToSet; // TODO use move to do this to get
     }
 
-    FakeTrain(unsigned int ID)
-    {
-        
-    }
 
     void LeavingTrainTrack()
     {
