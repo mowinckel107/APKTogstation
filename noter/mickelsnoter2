@@ -1,0 +1,140 @@
+Dette er mine noter til egen forståelse af koden. Det er ikke sikkert det giver mening for andre at læse.
+
+1) Main kører tests, og har noget nyt kaldet "TrainTrackHolder"
+
+2) "TrainTrackHolder" ligger i "setup.h" og "setup.cpp"
+	> Den indeholder 4 vektorer:
+		vector<TrainTrack> trainTracks
+		vector<Platform> platforms
+		 vector<TrainInput> trainInputs
+		vector <TrainOutput> trainOutputs
+
+	> Konstructoren:
+		1) //trainInput2 and trainInput1
+			- Opret 2 stk. trainInputs (*TI_1* og *TI_2*)
+				- Init dem med en tom vector af TrainTracks samt tallene 30 og 31
+			- Skub *TI_A1* og *TI_A2* ind bagerst i |trainInputs|
+
+		2) //platform2
+			- Opret en vector af TrainTracks (*VTT_A1*) med 2 stk. TrainInputs (*TI_1* og *TI_2*)
+			- Opret en platform (*P_A2*)
+				- Init den med vektor *VTT_A1* og tallet 21
+            - Skub *P_A2* ind bagerst i |platforms| 
+
+        3) //platform1
+            - Opret en vector af TrainTracks (*VTT_A2*) med TrainInput *TI_A1*
+            - Opret en platform (*P_A3*)
+                - Init den med *VTT_A2* og tallet 20
+            - Skub *P_A3* ind bagerst i |platforms|
+
+        4) //trainTrack3
+            - Opret en vector af TrainTracks (*VTT_B1*) med 2 stk. Platform (*P_A2* og *P_A3*)
+            - Opret et TrainTrack (*TT_B1*)
+                - Init det med *VTT_B1* og tallet 12
+            - Skub *TT_B1* ind bagerst i |trainTracks|
+
+        5) //trainTrack2
+            - Opret en vector af TrainTracks (*VTT_B2*) med 1 stk. TrainTrack (*TT_B1*) og 1 stk. Platform (*P_A2*)
+            - Opret et TrainTrack (*TT_B2*)
+                - Init det med *VTT_B2* og tallet 11
+            - Skub *TT_B2* ind bagerst i |trainTracks|
+
+        6) //trainTrack1
+            - Opret en vector af TrainTracks (*VTT_B3*) med *TT_B1*
+            - Opret et TrainTrack (*TT_B3*)
+                - Init det med *VTT_B3* og tallet 10
+            - Skub *TT_B3* ind bagerst i |trainTracks|                
+
+        7) //trainOutput3
+            - Opret en vector af TrainTracks (*VTT_C1*) med *TT_B2*
+            - Opret et TrainOutput (*TO_C1*)
+                - Init det med *VTT_C1* og tallet 0
+            - Skub *TO_C1* ind bagerst i |trainOutputs|
+
+        8) //trainOutput2
+            - Opret en vector af TrainTracks (*VTT_C2*) med TrainTracks *TT_B2* og *TT_B3*
+            - Opret et TrainOutput (*TO_C2*)
+                - Init det med *VTT_C2* og tallet 1
+            - Skub *TO_C2* ind bagerst i |trainOutputs|
+
+        9) //trainOutput1
+            - Opret en vector af TrainTracks (*VTT_C3*) med *TT_B3*
+            - Opret et TrainOutput (*TO_C3*)
+                - Init det med *VTT_C3* og tallet 2
+            - Skub *TO_C3* ind bagerst i |trainOutputs|
+
+2), kortere sagt:
+    1) trainInputs indholder to inputs, *TI_1* og *TI_2*
+        - Både *TI_1* og *TI_2* initialiseres med en tom liste af spor
+
+    2) platforms indeholder to platforme, *P_A2* og *P_A3*
+        - Platform *P_A2* initialiseres med en spor-vektor indeholdende TrainTracks *TI_1* og *TI_2*
+            Station1 er forbundet til Input1 og Input2
+        - Platform *P_A3* initialiseres med en spor-vektor indeholdende trainInput *TI_1*
+            Station2 er forbundet til Input2
+
+    3) trainTracks indeholder tre spor: *TT_B1*, *TT_B2* og *TT_B3*
+        - *TT_B1* initialiseres med en spor-vektor bestående af Platform *P_A2* og Platform *P_A3*
+            TrainTrack3 er forbundet til Station1 og Station2
+        - *TT_B2* initialiseres med en spor-vektor bestående af TrainTrack *TT_B1* og Platform *P_A2*
+            TrainTrack2 er forbundet til TrainTrack3 og Station2
+        - *TT_B3* initialiseres med en spor-vektor bestående af TrainTrack *TT_B1*
+            TrainTrack1 er forbundet til TrainTrack3
+
+    4) trainOutputs indeholder tre outputs: *TO_C1*, *TO_C2* og *TO_C3*
+        - *TO_C1* initialiseres med en spor-vektor bestående af *TT_B2*
+            Output3 er forbundet til TrainTrack2
+        - *TO_C2* initialiseres med en spor-vektor bestående af *TT_B2* og *TT_B3*
+            Output2 er forbundet til TrainTrack1 og TrainTrack2
+        - *TO_C3* initialiseres med en spor-vektor bestående af *TT_B3*
+            Output1 er forbundet til TrainTrack1
+
+
+3) trainTrack.h:
+    > Platform, TrainInput og TrainOutput er spor.
+    > Platform skal kunne unloade tog
+    > TrainInput skal kunne destruere tog, "for at simulere at de fodlader sporet"
+    > TrainOutput skal kunne oprette tog, "for at simulere at de ankommer til sporet"
+
+4) Erik har puttet et fint diagram ind :D
+
+
+5) ControlTower:
+
+    > Header ndeholder en struct, TrainCommunication
+        - signals2 A 
+        - signals2 B 
+
+    > Selve ControlTower
+        + TrainCommuncations* GetRouteAndSignals(unsigned int startintTrackID)
+        - vector<TrainCommunication> trainSignals
+        - vector<vector<unsigned int>> trainRouteForTrainOutput1
+        - vector<vector<unsigned int>> trainRouteForTrainOutput2
+        - vector<vector<unsigned int>> trainRouteForTrainOutput3
+        - vector<TrainTrack*> trainTracks
+
+    > cpp fil indeholder et FakeTrain : Train
+        - Der er smidt noget signal2 ind her også
+
+    > Kontroltårn konstructor laver en masse ruter
+    > og sender dem til trainRouteForTrainOutput1, 2 og 3
+    > det er så idéen at output objekterne opretter tog så de kan sendes videre.
+
+
+6)
+> SPOR
+
+	> SPOR
+        Har ansvar for:
+        - At holde styr på, hvor mange TOG de indholder
+        - At holde styr på, hvor mange TOG de må indeholde
+        - At holde styr på, hvilke SPOR, de forbinder videre til 
+
+    > STATION er et SPOR der kan unloade TOG
+        - Kan indeholde flere TOG
+
+	> STARTDEPOT er et SPOR der opretter TOG
+        - Kan indeholde ét TOG ad gangen
+
+    > SLUTDEPOT er et SPOR der destruerer TOG
+        - Kan indeholde ét TOG ad gangen
