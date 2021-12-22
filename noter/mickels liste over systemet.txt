@@ -1,0 +1,47 @@
+§1 Systemet består af KONTROLHUS og TOG, samt SPOR, STATIONER, STARTDEPOTER og SLUTDEPOTER.
+
+§2 SPOR
+
+    §2.0 SPOR kan forbindes til andre SPOR
+
+    §2.1 SPOR kan indeholde mindst ét TOG
+
+        §2.1.1 SPOR genererer en exception hvis for mange TOG kører ind på SPOR. Det er ikke meningen at dette skal ske, deraf exception.
+
+    §2.2 STATIONER, STARTDEPOTER og SLUTDEPOTER er specialiserede SPOR
+
+    §2.3 STATIONER kan fjerne LAST fra TOG
+
+    §2.4 STARTDEPOTER kan oprette TOG
+
+    §2.5 SLUTDEPOTER kan fjerne TOG
+
+§3 TOG
+
+    §3.0 TOG kører på SPOR, og 
+
+        §3.0.1 TOG kender forbindelser og pladsbegrænsning for det SPOR, pågældende TOG kører på
+
+    §3.1 TOG kan køre fra et SPOR til SPOR, hvis de to SPOR er forbundne
+
+    §3.2 TOG kan have LAST
+
+    §3.3 TOG kommunikerer med andre TOG, således at de ikke kører for mange ind på samme SPOR (signal2)
+
+    §3.4 TOG anmoder KONTROLHUS om ruter (signal2)
+
+    §3.5 TOG modtager ruter fra KONTROLHUS (signal2)
+    
+        §3.5.1 Ind til signal2 virker, føres ruter igennem constructor
+
+§4 LAST
+
+    §4.0 LAST tilhører TOG
+
+    §4.0 LAST kan tømmes af STATION
+
+§4 KONTROLHUS
+    
+    §5.0 KONTROLHUS sender ruter til TOG der anmoder om det (signal2)
+
+        §5.0.1 Ind til signal2 virker, føres ruter igennem constructor
