@@ -28,17 +28,16 @@ void TestsOfTrainTrack1(void)
     {
     // Step 1: Arrange
 
-    // Give TrainTrack2 an empty vector, as it leads to no other TrainTracks
-    std::vector<TrainTrack*> emptyListOfTrainTracksForTrainTrack2;
+    // Give TrainTrack2 an empty map, as it leads to no other TrainTracks
+    std::map<int, TrainTrack*> emptyListOfTrainTracksForTrainTrack2;
 
     TrainTrack myTrainTrack2(emptyListOfTrainTracksForTrainTrack2, 2);
 
-
     // Step 2: Act
 
-    // Give TrainTrack1 a vector only containing a pointer to TrainTrack2
-    std::vector<TrainTrack*> listOfTrainTracksForTrainTrack1;
-    listOfTrainTracksForTrainTrack1.push_back(&myTrainTrack2);
+    // Give TrainTrack1 a map only containing ID and pointer to TrainTrack2
+    std::map<int, TrainTrack*> listOfTrainTracksForTrainTrack1;
+    listOfTrainTracksForTrainTrack1.insert(std::make_pair(myTrainTrack2.GetID(),&myTrainTrack2));
 
     TrainTrack myTrainTrack1(listOfTrainTracksForTrainTrack1, 2);
     }
@@ -58,13 +57,13 @@ void TestsOfTrainTrack2(void)
     {
         // Step 1: Arrange
 
-        // Give TrainTrack2 an empty vector, as it leads to no other TrainTracks
-        std::vector<TrainTrack*> emptyListOfTrainTracksForTrainTrack2;
+        // Give TrainTrack2 an empty map, as it leads to no other TrainTracks
+        std::map<int, TrainTrack*> emptyListOfTrainTracksForTrainTrack2;
         TrainTrack myTrainTrack2(emptyListOfTrainTracksForTrainTrack2, 2);
 
-        // Give TrainTrack1 a vector only containing a pointer to TrainTrack2
-        std::vector<TrainTrack*> listOfTrainTracksForTrainTrack1;
-        listOfTrainTracksForTrainTrack1.push_back(&myTrainTrack2);
+        // Give TrainTrack1 a map only containing a pointer to TrainTrack2
+        std::map<int, TrainTrack*> listOfTrainTracksForTrainTrack1;
+        listOfTrainTracksForTrainTrack1.insert(std::make_pair(myTrainTrack2.GetID(),&myTrainTrack2));
 
         TrainTrack myTrainTrack1(listOfTrainTracksForTrainTrack1, 1);
 
@@ -103,8 +102,8 @@ void TestsOfTrainTrack3(void)
     {
         // Step 1: Arrange
 
-        // Give myTrainTrack an empty vector, as it leads to no other TrainTracks
-        std::vector<TrainTrack*> emptyListOfTrainTracksForTrainTrack;
+        // Give myTrainTrack an empty map, as it leads to no other TrainTracks
+        std::map<int, TrainTrack*> emptyListOfTrainTracksForTrainTrack;
         TrainTrack myTrainTrack(emptyListOfTrainTracksForTrainTrack, 0);
 
         // Create Trains to use for exercising TrainTracks

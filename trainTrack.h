@@ -2,7 +2,8 @@
 #define TRAINTRACK_H
 
 #include "train.h"
-#include <vector>
+#include <map>
+#include <iterator>
 
 class Train;
 
@@ -10,23 +11,23 @@ class Train;
 class TrainTrack
 {
     public:
-        TrainTrack(std::vector<TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID);
+        TrainTrack(std::map<int, TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID);
         TrainTrack* GetNextTrainTrack(unsigned int trainTrackNumber);
         void EnterTrainTracks(Train* IncomingTrain);
         void LeaveTrainTrack(void);
-        unsigned int GetID(void);
+        int GetID(void);
 
     private:
         Train* TrainOnTrack = nullptr;
-        std::vector<TrainTrack*> connectedTraintracks;
-        unsigned int ID;
+        std::map<int, TrainTrack*> connectedTraintracks;
+        int ID;
 };
 
 // This class expands the TrainTrack class with the ability to unload trains
 class Platform : public TrainTrack
 {
     public:
-        Platform(std::vector<TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
+        Platform(std::map<int, TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
         {}
 };
 
@@ -34,7 +35,7 @@ class Platform : public TrainTrack
 class TrainInput : public TrainTrack
 {
     public:
-        TrainInput(std::vector<TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
+        TrainInput(std::map<int, TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
         {}
 };
 
@@ -42,7 +43,7 @@ class TrainInput : public TrainTrack
 class TrainOutput : public TrainTrack
 {
     public:
-        TrainOutput(std::vector<TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
+        TrainOutput(std::map<int, TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
         {}
 };
 
