@@ -1,8 +1,7 @@
 #include "trainTrack.h"
 
 
-
-    TrainTrack::TrainTrack(std::vector<TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID)
+    TrainTrack::TrainTrack(std::map<int, TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID)
     {
         connectedTraintracks = outgoingTraintracks;
         ID = uniqueTrainTrackID;
@@ -31,7 +30,7 @@
         TrainOnTrack = nullptr;
     }
 
-    unsigned int TrainTrack::GetID(void)
+    int TrainTrack::GetID(void)
     {
         return ID;
     }

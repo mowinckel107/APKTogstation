@@ -3,6 +3,8 @@
 
 
 #include "trainTrack.h"
+#include <map>
+#include <vector>
 
 class TrainTrackHolder
 {
