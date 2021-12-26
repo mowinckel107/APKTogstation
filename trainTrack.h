@@ -5,6 +5,7 @@
 #include <map>
 #include <iterator>
 #include <string>
+#include <iostream>
 
 class Train;
 
@@ -14,7 +15,7 @@ class TrainTrack
     public:
         TrainTrack(std::map<int, TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID);
         TrainTrack* GetNextTrainTrack(int trainTrackNumber);
-        void EnterTrainTracks(Train* IncomingTrain);
+        virtual void EnterTrainTracks(Train* IncomingTrain);
         void LeaveTrainTrack(void);
         int GetID(void);
 
