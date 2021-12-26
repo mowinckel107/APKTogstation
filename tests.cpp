@@ -7,18 +7,19 @@ void TestsOfTrainTrack1(void);
 void TestsOfTrainTrack2(void);
 void TestsOfTrainTrack3(void);
 
-void TestsOfTrain(void);
+void TestsOfTrain1(void);
 
 
 
 void RunTests(void)
 {
-std::cout << "Starting Tests of TrainTrack:" << std::endl;
-TestsOfTrainTrack1();
-TestsOfTrainTrack2();
-TestsOfTrainTrack3();
+    std::cout << "Starting tests of TrainTrack:" << std::endl;
+    TestsOfTrainTrack1();
+    TestsOfTrainTrack2();
+    TestsOfTrainTrack3();
 
-TestsOfTrain();
+    std::cout << "Starting tests of Train" << std::endl;
+    TestsOfTrain1();
 }
 
 void TestsOfTrainTrack1(void)
@@ -67,8 +68,10 @@ void TestsOfTrainTrack2(void)
 
         TrainTrack myTrainTrack1(listOfTrainTracksForTrainTrack1, 1);
 
+        std::vector<int> routeForMyTrain{2};
+
         // Create Train to use for exercising TrainTracks
-        Train myTrain(0, nullptr);
+        Train myTrain(0, routeForMyTrain, nullptr);
 
         // Variable to hold pointer to nextTrainTrack instead of controlTower or train
         TrainTrack * nextTrainTrack;
@@ -77,7 +80,7 @@ void TestsOfTrainTrack2(void)
         // Step 2: Act
 
         myTrainTrack1.EnterTrainTracks(&myTrain);
-        nextTrainTrack = myTrainTrack1.GetNextTrainTrack(0);
+        nextTrainTrack = myTrainTrack1.GetNextTrainTrack(2);
         myTrainTrack1.LeaveTrainTrack();
         nextTrainTrack->EnterTrainTracks(&myTrain);
 
@@ -93,8 +96,6 @@ void TestsOfTrainTrack2(void)
     std::cout << "      Test 2, Train entering and leaving TrainTrack, succeeded" << std::endl;
 }
 
-
-
 void TestsOfTrainTrack3(void)
 {
     // Test 3, Crashing 2 Trains together
@@ -106,10 +107,11 @@ void TestsOfTrainTrack3(void)
         std::map<int, TrainTrack*> emptyListOfTrainTracksForTrainTrack;
         TrainTrack myTrainTrack(emptyListOfTrainTracksForTrainTrack, 0);
 
-        // Create Trains to use for exercising TrainTracks
-        Train myTrain1(0,nullptr);
-        Train myTrain2(1,nullptr);
+        std::vector<int> EmptyTrainRoute;
 
+        // Create Trains to use for exercising TrainTracks
+        Train myTrain1(0, EmptyTrainRoute, nullptr);
+        Train myTrain2(1, EmptyTrainRoute, nullptr);
 
         // Step 2: Act
 
@@ -140,7 +142,35 @@ void TestsOfTrainTrack3(void)
     std::cout << "      Test 3, Crashing 2 Trains together, failed" << std::endl;
 }
 
-void TestsOfTrain(void)
+void TestsOfTrain1(void)
 {
+    // Test 1, Running StartDriveLoop();
+    try
+    {
+        // Step 1: Arrange
+            // Give TrainTrack2 an empty map, as it leads to no other TrainTracks
+            std::map<int, TrainTrack*> emptyListOfTrainTracksForTrainTrack2;
+            TrainInput myTrainTrack2(emptyListOfTrainTracksForTrainTrack2, 2);
 
+            // Give TrainTrack1 a map only containing a pointer to TrainTrack2
+            std::map<int, TrainTrack*> listOfTrainTracksForTrainTrack1;
+            listOfTrainTracksForTrainTrack1.insert(std::make_pair(myTrainTrack2.GetID(),&myTrainTrack2));
+
+            TrainTrack myTrainTrack1(listOfTrainTracksForTrainTrack1, 1);
+
+            // Create Train to use for exercising TrainTracks
+            std::vector<int> TrainRoute{2};
+            Train *myTrain = new Train(0, TrainRoute, &myTrainTrack1);
+
+        // Step 2: Act
+
+        myTrain->StartDriveLoop();
+        
+
+        // Step 3: Assert
+    }
+    catch(const char* msg)
+    {
+        std::cout << msg << std::endl;
+    }
 }

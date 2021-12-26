@@ -4,6 +4,7 @@
 #include "train.h"
 #include <map>
 #include <iterator>
+#include <string>
 
 class Train;
 
@@ -12,7 +13,7 @@ class TrainTrack
 {
     public:
         TrainTrack(std::map<int, TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID);
-        TrainTrack* GetNextTrainTrack(unsigned int trainTrackNumber);
+        TrainTrack* GetNextTrainTrack(int trainTrackNumber);
         void EnterTrainTracks(Train* IncomingTrain);
         void LeaveTrainTrack(void);
         int GetID(void);
@@ -37,6 +38,8 @@ class TrainInput : public TrainTrack
     public:
         TrainInput(std::map<int, TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
         {}
+
+        void EnterTrainTracks(Train* IncomingTrain);
 };
 
 // This class creates trains, simulating them entering the area

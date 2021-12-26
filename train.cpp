@@ -1,64 +1,50 @@
 #include "train.h"
 
+#include <iostream> 
 
-
-
-Train::Train(int InputID, TrainTrack * startingTrack)
+Train::Train(int InputID, std::vector<int> Route, TrainTrack * startingTrack)
 {
     ID = InputID;
     CurrentTrack = startingTrack;
+    progressAlongRoute = 0;
+    route = Route;
 }
 
-/*
-void Train::SetInstruction(Instruction * Ins)
-{
-    CurrentInstruction = Ins;
-    // det er IKKE mit problem at destruere brugte instruktioner
-}
 
-bool Train::GetInstruction(ControlTower * CT)
+void Train::StartDriveLoop(void)
 {
-    // pseudokode:
-        // Kald metode på kontrolhus og angiv ID eller this.
-        // returnerer hvad end metoden på kontrolhus returnerer.
-}
+    boost::asio::io_context io;
+    boost::asio::steady_timer t(io);
+    TrainTrack* nextTrainTrack;
 
-void Train::Drive()
-{
-    // pseudokode:
-        // Notér tracks vi kan køre til, som ikke er blokerede
-        // Notér tracks endestation kan køre til
-        // Loop igennem dem ind og find alle ruter imellem dem
-        // Notér den korteste
-        // Beregn hvornår toget skal afsted til næste punkt på ruten
-        // Notér næste punkt på ruten, NextTrack
-
-        // HVIS tidTilAtKøre
-            // MoveTrack(NextTrack)
-}
-
-void Train::MoveTrack(TrainTrack * Track)
-{
-    try
+    while(true)
     {
-        Track->EnterTrainTracks(this);
-    }
-    catch (const char* msg)
-    {
-        if(static_cast<std::string>(msg) == "A train crashed into another train")
+
+        // Delay
+        t.expires_after(boost::asio::chrono::seconds(1));
+        t.wait();
+
+
+        bool isNextTrainTrackOccupied = true;
+        while(isNextTrainTrackOccupied)
         {
-            // do something ...
-            return;
+            // if call to signal2 WantToEnterNextTrain is false TODO
+            {
+                t.expires_after(boost::asio::chrono::milliseconds(100));
+                t.wait();
+            }
+            //else TODO
+            {
+                isNextTrainTrackOccupied = false;
+            }
         }
+
+
+        CurrentTrack->LeaveTrainTrack();
+        //Call signal2 HaveLeft TODO
+        std::cout << "Trying for " << route[progressAlongRoute] << std::endl;
+        CurrentTrack = CurrentTrack->GetNextTrainTrack(route[progressAlongRoute]);
+        progressAlongRoute++;
+        CurrentTrack->EnterTrainTracks(this);
     }
-
-    if (CurrentTrack != nullptr)
-    {
-        Track->LeaveTrainTrack();
-    }
-
-    CurrentTrack = Track;
-
 }
-
-*/

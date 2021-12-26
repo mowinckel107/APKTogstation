@@ -1,19 +1,34 @@
 #include "trainTrack.h"
 
-
     TrainTrack::TrainTrack(std::map<int, TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID)
     {
         connectedTraintracks = outgoingTraintracks;
         ID = uniqueTrainTrackID;
     }
 
-    TrainTrack* TrainTrack::GetNextTrainTrack(unsigned int trainTrackNumber)
+    TrainTrack* TrainTrack::GetNextTrainTrack(int trainTrackNumber)
     {
-        return connectedTraintracks[trainTrackNumber];
+        std::map<int, TrainTrack*>::iterator myIterator = connectedTraintracks.begin();
+    
+
+
+        while(myIterator != connectedTraintracks.end())
+        {
+            if(myIterator->first == trainTrackNumber)
+            {
+                return myIterator->second;
+            }
+            myIterator++;
+        }
+        // If Train asked for a TrainTrack that did not exist
+        throw "A Train derailed";
     }
+
+#include <iostream>
 
     void TrainTrack::EnterTrainTracks(Train* IncomingTrain)
     {
+        std::cout << "TrainTrack" << std::endl;
         // if a train is already on this traintrack
         if(!(TrainOnTrack == nullptr))
         {
@@ -34,6 +49,15 @@
     {
         return ID;
     }
+
+
+
+   void TrainInput::EnterTrainTracks(Train* IncomingTrain)
+    {
+        std::cout << "Deleted" << std::endl;
+        delete IncomingTrain;
+    }
+
 
 
 
