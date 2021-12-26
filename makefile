@@ -2,7 +2,7 @@ SOURCES=main.cpp trainTrack.cpp train.cpp controlTower.cpp tests.cpp setup.cpp
 OBJECTS=$(addprefix $(BUILD_DIR)/, $(SOURCES:.cpp=.o))
 DEPS=$(addprefix $(BUILD_DIR)/, $(SOURCES:.cpp=.d))
 EXE=prog.exe
-CXXFLAGS=-I.
+CXXFLAGS=-I. -pthread
 
 # Making for host if no argument is provided, ie, "ARCH=null"
 ifndef ${ARCH}
