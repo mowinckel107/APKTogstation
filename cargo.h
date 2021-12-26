@@ -1,7 +1,7 @@
 #ifndef __CARGO_H__
 #define __CARGO_H__
 
-#include <string.h>
+#include <string>
 // The "temperature" of the cargo
 // Frozen implies solid
 enum Temperature
@@ -24,13 +24,16 @@ template <Temperature t, State s>
 class cargo
 {
 private:
-    Temperature temp;
-    State state;
+    Temperature temp_;
+    State state_;
+    std::string cargo_;
 public:
     cargo();
     ~cargo();
-    String getTemp();       // Returns Temperature enum as a string
-    String getState();      // Returns State enum as a string
+    std::string getTemp();       // Returns Temperature enum as a string
+    std::string getState();      // Returns State enum as a string
+    void setCargo(std::string cargo);
+    std::string getCargo();
 };
 
 
