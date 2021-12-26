@@ -24,11 +24,10 @@
         throw "A Train derailed";
     }
 
-#include <iostream>
+
 
     void TrainTrack::EnterTrainTracks(Train* IncomingTrain)
     {
-        std::cout << "TrainTrack" << std::endl;
         // if a train is already on this traintrack
         if(!(TrainOnTrack == nullptr))
         {
@@ -54,7 +53,6 @@
 
    void TrainInput::EnterTrainTracks(Train* IncomingTrain)
     {
-        std::cout << "Deleted" << std::endl;
         delete IncomingTrain;
     }
 

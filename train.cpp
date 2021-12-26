@@ -10,6 +10,11 @@ Train::Train(int InputID, std::vector<int> Route, TrainTrack * startingTrack)
     route = Route;
 }
 
+Train::~Train()
+{
+    isNotDeleted = false;
+}
+    
 
 void Train::StartDriveLoop(void)
 {
@@ -17,7 +22,7 @@ void Train::StartDriveLoop(void)
     boost::asio::steady_timer t(io);
     TrainTrack* nextTrainTrack;
 
-    while(true)
+    while(isNotDeleted)
     {
 
         // Delay
@@ -42,7 +47,6 @@ void Train::StartDriveLoop(void)
 
         CurrentTrack->LeaveTrainTrack();
         //Call signal2 HaveLeft TODO
-        std::cout << "Trying for " << route[progressAlongRoute] << std::endl;
         CurrentTrack = CurrentTrack->GetNextTrainTrack(route[progressAlongRoute]);
         progressAlongRoute++;
         CurrentTrack->EnterTrainTracks(this);

@@ -7,7 +7,9 @@ void TestsOfTrainTrack1(void);
 void TestsOfTrainTrack2(void);
 void TestsOfTrainTrack3(void);
 
+
 void TestsOfTrain1(void);
+void TestsOfTrain2(void);
 
 
 
@@ -20,6 +22,7 @@ void RunTests(void)
 
     std::cout << "Starting tests of Train" << std::endl;
     TestsOfTrain1();
+    TestsOfTrain2();
 }
 
 void TestsOfTrainTrack1(void)
@@ -142,9 +145,36 @@ void TestsOfTrainTrack3(void)
     std::cout << "      Test 3, Crashing 2 Trains together, failed" << std::endl;
 }
 
+
 void TestsOfTrain1(void)
 {
-    // Test 1, Running StartDriveLoop();
+        // Test 1, Creating train on TrainTrack
+    try
+    {
+        // Step 1: Arrange
+        // Give TrainTrack an empty map, as it leads to no other TrainTracks
+        std::map<int, TrainTrack*> emptyListOfTrainTracksForTrainTrack;
+        TrainInput myTrainTrack(emptyListOfTrainTracksForTrainTrack, 0);
+
+
+        // Step 2: Act
+        // Create Train with an empty route
+        std::vector<int> TrainRoute{};
+        Train myTrain(0, TrainRoute, &myTrainTrack);
+    
+        // Step 3: Assert
+    }
+    catch(...)
+    {
+        std::cout << "      Test 1, Creating train on TrainTrack, failed" << std::endl;
+    }
+
+        std::cout << "      Test 1, Creating train on TrainTrack, succeeded" << std::endl;
+}
+
+void TestsOfTrain2(void)
+{
+    // Test 2, Running infinite loop
     try
     {
         // Step 1: Arrange
@@ -158,7 +188,7 @@ void TestsOfTrain1(void)
 
             TrainTrack myTrainTrack1(listOfTrainTracksForTrainTrack1, 1);
 
-            // Create Train to use for exercising TrainTracks
+            // Create Train with route on TrainTrack1
             std::vector<int> TrainRoute{2};
             Train *myTrain = new Train(0, TrainRoute, &myTrainTrack1);
 
@@ -166,11 +196,17 @@ void TestsOfTrain1(void)
 
         myTrain->StartDriveLoop();
         
-
         // Step 3: Assert
     }
     catch(const char* msg)
     {
-        std::cout << msg << std::endl;
+        std::cout << "      Test 2, Running infinite loop, failed" << std::endl;
+        std::cout << "      " << msg << std::endl;
     }
+    catch(...)
+    {
+        std::cout << "      Test 2, Running infinite loop, failed" << std::endl;
+    }
+
+    std::cout <<"      Test 2, Running infinite loop, succeeded" << std::endl;
 }

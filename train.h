@@ -12,6 +12,7 @@ class Train
 {
    public:
         Train(int InputID, std::vector<int> Route, TrainTrack * startingTrack);
+		~Train();
 		void StartDriveLoop(void);
 
 
@@ -20,6 +21,7 @@ class Train
 		TrainTrack * CurrentTrack;
 		std::vector<int> route;
 		int progressAlongRoute;
+		bool isNotDeleted = true;
 };
 
 
