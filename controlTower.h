@@ -2,7 +2,7 @@
 #define CONTROLTOWER_H
 
 
-#include "boost_1_77_0/boost/signals2.hpp"
+#include <boost/signals2.hpp>
 #include "trainTrack.h"
 #include "train.h"
 #include <vector>
