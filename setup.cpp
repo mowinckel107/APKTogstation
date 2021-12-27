@@ -67,7 +67,7 @@ TrainTrackHolder::TrainTrackHolder(void)
 
     ListOfTrainTracksFortrainOutput3.insert(std::make_pair(trainTrack2.GetID(),&trainTrack2));
 
-    TrainOutput trainOutput3(ListOfTrainTracksFortrainOutput3,0);
+    TrainOutput trainOutput3(ListOfTrainTracksFortrainOutput3,2);
     trainOutputs.push_back(trainOutput3);
 
 
@@ -86,7 +86,7 @@ TrainTrackHolder::TrainTrackHolder(void)
 
     ListOfTrainTracksFortrainOutput1.insert(std::make_pair(trainTrack1.GetID(),&trainTrack1));
 
-    TrainOutput trainOutput1(ListOfTrainTracksFortrainOutput1,2);
+    TrainOutput trainOutput1(ListOfTrainTracksFortrainOutput1,0);
     trainOutputs.push_back(trainOutput1);
 
 }
