@@ -59,7 +59,7 @@ void Train::StartDriveLoop(void)
         //Call signal2 HaveLeft TODO
         CurrentTrack = CurrentTrack->GetNextTrainTrack(route[progressAlongRoute]);
         progressAlongRoute++;
-        CurrentTrack->EnterTrainTracks(this);
+        CurrentTrack->EnterTrainTracks(this); // Train may get deleted here if TrainTrack is a TrainInput
     }
 }
 
