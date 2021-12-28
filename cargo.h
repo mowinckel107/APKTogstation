@@ -21,15 +21,16 @@ enum State
 };
 
 template <Temperature t, State s>
-class cargo
+class Cargo
 {
 private:
     Temperature temp_;
     State state_;
     std::string cargo_;
 public:
-    cargo();
-    ~cargo();
+    Cargo();                    // Cargo is empty
+    Cargo(std::string theCargo);// Cargo
+    ~Cargo();
     std::string getTemp();       // Returns Temperature enum as a string
     std::string getState();      // Returns State enum as a string
     void setCargo(std::string cargo);

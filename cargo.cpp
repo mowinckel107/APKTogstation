@@ -3,20 +3,29 @@
 // Standard template instantiation
 
 template<Temperature t, State s>
-cargo<t, s>::cargo()
+Cargo<t, s>::Cargo()
 {
     temp_ = t;
     state_ = s;
+    cargo_ = "Empty";
 }
 
 template<Temperature t, State s>
-cargo<t, s>::~cargo() 
+Cargo<t, s>::Cargo(std::string theCargo)
+{
+    temp_ = t;
+    state_ = s;
+    cargo_ = theCargo;
+}
+
+template<Temperature t, State s>
+Cargo<t, s>::~Cargo() 
 {
     
 }
 
 template<Temperature t, State s>
-std::string cargo<t, s>::getTemp() 
+std::string Cargo<t, s>::getTemp() 
 {
     switch (temp_)
     {
@@ -29,7 +38,7 @@ std::string cargo<t, s>::getTemp()
 }
 
 template<Temperature t, State s>
-std::string cargo<t, s>::getState() 
+std::string Cargo<t, s>::getState() 
 {
     switch (state_)
     {
@@ -42,13 +51,13 @@ std::string cargo<t, s>::getState()
 }
 
 template<Temperature t, State s>
-void cargo<t, s>::setCargo(std::string cargo)
+void Cargo<t, s>::setCargo(std::string cargo)
 {
     cargo_ = cargo;
 }
 
 template<Temperature t, State s>
-std::string cargo<t, s>::getCargo()
+std::string Cargo<t, s>::getCargo()
 {
     return cargo_;
 }
@@ -56,6 +65,6 @@ std::string cargo<t, s>::getCargo()
 // Template arguments that are invalid should result in error
 
 template<>
-cargo<frozen, liquid>::cargo()
+Cargo<frozen, liquid>::Cargo()
 {
 }
