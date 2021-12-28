@@ -1,13 +1,23 @@
 #include "train.h"
 
-#include <iostream> 
 
-Train::Train(int InputID, std::vector<int> Route, TrainTrack * startingTrack)
+
+Train::Train
+(
+    int InputID,
+    std::vector<int> Route,
+    TrainTrack * startingTrack,
+    boost::signals2::signal<void ()> * inputLeavingSignal,
+    boost::signals2::signal<bool ()> * inputIsTrainTrackOccupiedSignal
+)
 {
     ID = InputID;
-    CurrentTrack = startingTrack;
-    progressAlongRoute = 0;
     route = Route;
+    CurrentTrack = startingTrack;
+    leavingTrainTrackSignal = inputLeavingSignal;
+    wantToEnterTrainTrackSignal = inputIsTrainTrackOccupiedSignal;
+    progressAlongRoute = 0;
+
 }
 
 Train::~Train()
@@ -51,4 +61,9 @@ void Train::StartDriveLoop(void)
         progressAlongRoute++;
         CurrentTrack->EnterTrainTracks(this);
     }
+}
+
+int Train::GetID(void)
+{
+    return ID;
 }
