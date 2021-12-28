@@ -74,7 +74,7 @@ void TestsOfTrainTrack2(void)
         std::vector<int> routeForMyTrain{2};
 
         // Create Train to use for exercising TrainTracks
-        Train myTrain(0, routeForMyTrain, nullptr);
+        Train myTrain(0, routeForMyTrain, nullptr, nullptr, nullptr);
 
         // Variable to hold pointer to nextTrainTrack instead of controlTower or train
         TrainTrack * nextTrainTrack;
@@ -113,8 +113,8 @@ void TestsOfTrainTrack3(void)
         std::vector<int> EmptyTrainRoute;
 
         // Create Trains to use for exercising TrainTracks
-        Train myTrain1(0, EmptyTrainRoute, nullptr);
-        Train myTrain2(1, EmptyTrainRoute, nullptr);
+        Train myTrain1(0, EmptyTrainRoute, nullptr, nullptr, nullptr);
+        Train myTrain2(1, EmptyTrainRoute, nullptr, nullptr, nullptr);
 
         // Step 2: Act
 
@@ -160,7 +160,7 @@ void TestsOfTrain1(void)
         // Step 2: Act
         // Create Train with an empty route
         std::vector<int> TrainRoute{};
-        Train myTrain(0, TrainRoute, &myTrainTrack);
+        Train myTrain(0, TrainRoute, &myTrainTrack, nullptr, nullptr);
     
         // Step 3: Assert
     }
@@ -190,7 +190,7 @@ void TestsOfTrain2(void)
 
             // Create Train with route on TrainTrack1
             std::vector<int> TrainRoute{2};
-            Train *myTrain = new Train(0, TrainRoute, &myTrainTrack1);
+            Train *myTrain = new Train(0, TrainRoute, &myTrainTrack1, nullptr, nullptr);
 
         // Step 2: Act
 
