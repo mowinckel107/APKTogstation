@@ -24,7 +24,7 @@ class ControlTowerFunctor
     public:
         ControlTowerFunctor(bool managerMode);
 
-        TrainCommunicationAndRoute operator()(unsigned int startingTrainTrackID, int TrainID);
+        TrainCommunicationAndRoute operator()(unsigned int startingTrainTrackID, int TrainID, TrainFunctor newTrainFunctor);
         void operator()(unsigned int TrainTrackID, int TrainID, bool direction);
         
     private:
