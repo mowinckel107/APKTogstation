@@ -9,14 +9,13 @@
 #include <vector>
 #include <map>
 
-
 using RouteVector = std::vector<std::vector<unsigned int>>;
 
 struct TrainCommunicationAndRoute
 {
     boost::signals2::signal<void ()> * leavingSignal_;
     boost::signals2::signal<bool ()> * isTrainTrackOccupiedSignal_;
-    trainTrackConnectionMap trainTrackConnections_;
+    trainTrackConnectionMap * trainTrackConnections_;
     std::vector<unsigned int> route_;
 };
 
@@ -33,7 +32,5 @@ class ControlTowerFunctor
         std::map<int, std::vector<int>> trainRoutes_; // Train routes by train
         std::map<int, RouteVector> routes_; 
 };
-
-
 
 #endif /* CONTROLTOWERFUNCTOR_H */
