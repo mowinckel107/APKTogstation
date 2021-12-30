@@ -1,7 +1,7 @@
 #ifndef TRAINFUNCTOR_H
 #define TRAINFUNCTOR_H
 
-typedef vectorOfConnections = std::vector<boost::signals2::signal<bool ()>;
+typedef vectorOfConnections = std::vector<boost::signals2::signal<bool ()> *>;
 typedef trackConnectionMap = std::map<int, vectorOfSignals>;
 typedef trainTrackConnectionMap = std::map<int, trackConnectionMap>;
 
