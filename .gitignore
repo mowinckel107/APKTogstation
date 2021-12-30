@@ -33,3 +33,5 @@
 
 # Paths
 .vscode/
+.bin/
+.build/
