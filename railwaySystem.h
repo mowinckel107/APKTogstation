@@ -1,15 +1,15 @@
-#ifndef SETUP_H
-#define SETUP_H
+#ifndef RAILWAYSYSTEM_H
+#define RAILWAYSYSTEM_H
 
 
 #include "trainTrack.h"
 #include <map>
 #include <vector>
 
-class TrainTrackHolder
+class RailwaySystem
 {
     public:
-    TrainTrackHolder(void);
+    RailwaySystem(void);
 
     std::vector<TrainTrack> trainTracks;
     std::vector<Platform> platforms;
@@ -19,4 +19,4 @@ class TrainTrackHolder
 
 
 
-#endif /* SETUP_H */
+#endif /* RAILWAYSYSTEM_H */

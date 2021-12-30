@@ -1,8 +1,6 @@
-#include "setup.h"
+#include "railwaySystem.h"
 
-
-
-TrainTrackHolder::TrainTrackHolder(void)
+RailwaySystem::RailwaySystem(void)
 {
     // trainInput2 and trainInput1
     std::map<int, TrainTrack*> emptyListOfTrainTracksForTrainInput;
