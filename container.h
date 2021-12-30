@@ -7,7 +7,7 @@ template <Temperature t, State s>
 class Container
 {
 private:
-    void* cargo_ptr;    // Void pointer to later point to cargo when cargo is created
+    Cargo<t, s>* cargo_ptr;    // Void pointer to later point to cargo when cargo is created
 public:
     Container();                    // Creates container and empty cargo
     Container(std::string cargo);   // Creates container with cargo
@@ -16,5 +16,44 @@ public:
     void addCargo(std::string cargo);
     void removeCargo();
 };
+
+// Remember to put implementation in header file to solve template issues
+// If not, compiler has no idea how to implement functions
+
+template <Temperature t, State s>
+Container<t, s>::Container() : cargo_ptr(&Cargo<t,s>("Empty"))
+{
+    
+}
+
+template <Temperature t, State s>
+Container<t, s>::Container(std::string cargo) : cargo_ptr(&Cargo<t, s>(cargo))
+{
+    
+}
+
+template <Temperature t, State s>
+Container<t, s>::~Container() 
+{
+    cargo_ptr->~Cargo();
+}
+
+template <Temperature t, State s>
+std::string Container<t, s>::seeCargo()
+{
+    return cargo_ptr->getCargo();
+}
+
+template <Temperature t, State s>
+void Container<t, s>::addCargo(std::string cargo)
+{
+
+}
+
+template <Temperature t, State s>
+void Container<t, s>::removeCargo()
+{
+    
+}
 
 #endif // __CONTAINER_H__
