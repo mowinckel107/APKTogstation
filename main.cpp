@@ -17,6 +17,14 @@ int main()
 
     std::cout << water.seeCargo() << std::endl;
 
+    water.removeCargo();
+
+    std::cout << water.seeCargo() << std::endl;
+
+    water.addCargo("water");
+
+    std::cout << water.seeCargo() << std::endl;
+
     return 0;
 }
 

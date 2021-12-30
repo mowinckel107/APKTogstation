@@ -2,6 +2,8 @@
 #define __CARGO_H__
 
 #include <string>
+#include <type_traits>
+
 // The "temperature" of the cargo
 // Frozen implies solid
 enum Temperature
@@ -41,32 +43,62 @@ public:
 
 // Standard template instantiation
 
+// No cargo given, cargo is empty
 template<Temperature t, State s>
 Cargo<t, s>::Cargo()
 {
+    // Throw compile time error if frozen and liquid
+    static_assert(!(t == frozen && s == liquid), "Can't be frozen and a liquid");
+
+    //Throw compile time error if frozen and gas
+    static_assert(!(t == frozen && s == gas), "Can't be frozen and a gas");
     temp_ = t;
     state_ = s;
     cargo_ = "Empty";
 }
 
+// cargo is given, cargo is theCargo
 template<Temperature t, State s>
 Cargo<t, s>::Cargo(std::string theCargo)
 {
+    // Throw compile time error if frozen and liquid
+    static_assert(!(t == frozen && s == liquid), "Can't be frozen and a liquid");
+
+    //Throw compile time error if frozen and gas
+    static_assert(!(t == frozen && s == gas), "Can't be frozen and a gas");
+
     temp_ = t;
     state_ = s;
     cargo_ = theCargo;
 }
 
+// Destructor
 template<Temperature t, State s>
 Cargo<t, s>::~Cargo() 
 {
     
 }
 
+// Get a string corresponding to value of temp_
 template<Temperature t, State s>
 std::string Cargo<t, s>::getTemp() 
 {
     switch (temp_)
+    {
+    case temperate  : return "temperate"; 
+    case cold       : return "cold";
+    case frozen     : return "frozen";
+    
+    
+    default: return "Error";
+    }
+}
+
+// Get a string corresponding to value of state_
+template<Temperature t, State s>
+std::string Cargo<t, s>::getState() 
+{
+    switch (state_)
     {
     case solid : return "solid" ; 
     case liquid: return "liquid";
@@ -76,37 +108,39 @@ std::string Cargo<t, s>::getTemp()
     }
 }
 
-template<Temperature t, State s>
-std::string Cargo<t, s>::getState() 
-{
-    switch (state_)
-    {
-    case temperate  : return "temperate"; 
-    case cold       : return "cold";
-    case frozen     : return "gas";
-    
-    default: return "Error";
-    }
-}
-
+// Set cargo_
 template<Temperature t, State s>
 void Cargo<t, s>::setCargo(std::string cargo)
 {
     cargo_ = cargo;
 }
 
+// Return cargo_
 template<Temperature t, State s>
 std::string Cargo<t, s>::getCargo()
 {
     return cargo_;
 }
 
-// Template arguments that are invalid should result in error
+// Retired code since I couldn't figure out how to implement a way to compile error on specialization
 
-template<>
-Cargo<frozen, liquid>::Cargo()
-{
-}
+// // Template arguments that are illogical should result in error
+// // In order to do this, making custom false type
+// template<typename T>
+// struct assert_false : std::false_type
+// { };
+
+// template<>
+// Cargo<frozen, liquid>::Cargo()
+// {
+//     static_assert(assert_false<int>::value);
+// }
+
+// template<>
+// Cargo<frozen, gas>::Cargo()
+// {
+
+// }
 
 
 #endif // __CARGO_H__
