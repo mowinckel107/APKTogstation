@@ -2,7 +2,7 @@
 #include "trainTrack.h"
 #include "train.h"
 #include "controlTower.h"
-#include "setup.h"
+#include "railwaySystem.h"
 
 
 #include <vector>
@@ -15,7 +15,7 @@ int main()
 {
     RunTests(); // Uncomment/Comment to run/not run the tests
 
-    TrainTrackHolder TheTrainTracks;
+    RailwaySystem myRailwaySystem;
 
     return 0;
 }
