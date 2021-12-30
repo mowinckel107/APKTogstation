@@ -1,7 +1,6 @@
 #ifndef CONTROLTOWER_H
 #define CONTROLTOWER_H
 
-
 #include <boost/signals2.hpp>
 #include <boost/bind/bind.hpp>
 #include "trainTrack.h"
@@ -46,37 +45,6 @@ class ControlTower
 
 };
 
-
-
-
-class TrainSignalFunctor
-{
-private:
-    bool isContainingTrain = false;
-public:
-    
-
-
-    bool operator()(bool isEnteringRequest, int trainID)
-    {
-        // if it is a entering request and there is already a train on the TrainTrack
-        if(isEnteringRequest && isContainingTrain)
-        {
-            return false; // Train may not enter
-        }
-        // if it is a entering request and the TrainTrack is free
-        else if (isEnteringRequest)
-        {
-            return true; // Train may enter
-        }
-        // if it is a "leaving"
-        else
-        {
-            isContainingTrain = false;
-            return true;
-        }
-    }
-};
 
 
 #endif /* CONTROLTOWER_H */
