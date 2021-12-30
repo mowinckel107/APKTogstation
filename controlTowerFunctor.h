@@ -22,10 +22,10 @@ struct TrainCommunicationAndRoute
 class ControlTowerFunctor
 {
     public:
-        ControlTowerFunctor();
+        ControlTowerFunctor(bool managerMode);
 
         TrainCommunicationAndRoute operator()(unsigned int startingTrainTrackID, int TrainID);
-        void operator()(unsigned int TrainTrackID, int TrainID, bool leaveMode);
+        void operator()(unsigned int TrainTrackID, int TrainID, bool direction);
         
     private:
         std::map<int, TrainFunctor> trainFunctors_; // train functors by train

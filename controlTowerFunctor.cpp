@@ -1,6 +1,6 @@
 #include "controlTowerFunctor.h"
 
-ControlTowerFunctor::ControlTowerFunctor()
+ControlTowerFunctor::ControlTowerFunctor(bool managerMode)
 {
     // Creating 3 routes for all 3 starting positions
     // 1
@@ -47,11 +47,12 @@ ControlTowerFunctor::ControlTowerFunctor()
 
 TrainCommunicationAndRoute ControlTowerFunctor::operator()(unsigned int startingTrainTrackID, int TrainID)
 {
-
+    // this is GetRouteAndSignals()
+    
 }
 
-void ControlTowerFunctor::operator()(unsigned int TrainTrackID, int TrainID, bool leaveMode)
+void ControlTowerFunctor::operator()(unsigned int TrainTrackID, int TrainID, bool direction)
 {
-
+    // this is UpdateTrainCommunicationLeave and UpdateTrainCommunicationEnter in one, with some new features.
 
 }
