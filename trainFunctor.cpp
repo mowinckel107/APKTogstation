@@ -1,31 +1,32 @@
 #include "trainFunctor.h"
 
+
 // Setup
 TrainFunctor::TrainFunctor(int ownerTrainID)
 {
     ownerTrainID_ = ownerTrainID;
 }
 
-// Clear reservation
+// a Clear reservation
 void TrainFunctor::operator()()
 {
     reservedID_ = 0;
 }
 
-// Reserve track {trackID}
+// b Reserve track {trackID}
 void TrainFunctor::operator()(int trackID)
 {
     reservedID_ = trackID;
 }
 
-// Train {trainID} has left track {trackID}
+// c Train {trainID} has left track {trackID}
 void TrainFunctor::operator()(int trainID, int trackID)
 {
     std::map<int, vectorOfConnections> foundTrain = trainTrackConnections_.find(trainID)->second;
     vectorOfConnections foundTrack = foundTrain.find(trackID)->second;
 
     // If the last link is to be removed, disconnect all remaining connections
-    if (foundTrain.size == 1)
+    if ((foundTrain.size()) == 1)
     {
         for (auto elem : foundTrack)
         {
@@ -36,8 +37,8 @@ void TrainFunctor::operator()(int trainID, int trackID)
     // The chosen track in relation to train {trainID} does no longer have any links
     foundTrack.clear();
     foundTrain.erase(trackID);
-
 }
+
 
 // Some train is requesting track {TrackID}
 bool TrainFunctor::operator()(bool isRequest, int trackID)

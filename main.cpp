@@ -1,7 +1,7 @@
 
 #include "trainTrack.h"
 #include "train.h"
-#include "controlTower.h"
+#include "controlTowerFunctor.h"
 #include "railwaySystem.h"
 
 

@@ -25,12 +25,12 @@ class ControlTowerFunctor
     public:
         ControlTowerFunctor(bool managerMode);
 
-        TrainCommunicationAndRoute operator()(int startingTrainTrackID, int TrainID, TrainFunctor newTrainFunctor);
+        TrainCommunicationAndRoute operator()(int startingTrainTrackID, int TrainID, TrainFunctor * newTrainFunctor);
         void operator()(int TrainTrackID, int TrainID, int direction);
         
     private:
         bool managerMode_;
-        std::map<int, TrainFunctor> trainFunctors_; // train functors by train
+        std::map<int, TrainFunctor *> trainFunctors_; // train functors by train
         std::map<int, std::vector<int>> trainRoutes_; // Train routes by train.
         std::map<int, std::vector<int>> trackTrains_; // Train by track (on a train route). Basically the opposite of trainRoutes_
         std::map<int, RouteVector> routes_;

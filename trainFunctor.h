@@ -7,12 +7,9 @@
 #include <boost/bind/bind.hpp>
 
 using vectorOfConnections = std::vector<boost::signals2::connection>;
-
-// int being the ID of a track. Every track related connection on every train driving through this track.
 using trackConnectionMap = std::map<int, vectorOfConnections>;
-
-// int being the ID of a train (for sorting)
 using trainTrackConnectionMap = std::map<int, trackConnectionMap>;
+
 
 class TrainFunctor
 {
@@ -48,5 +45,21 @@ public:
     void operator()(int newTrainID, trackConnectionMap trackConnection);
 
 };
+
+// Wrapper for stitching some data together with a specialized functor. Wanted to use bind for this exact purpose, but it didn't go well with signal2.
+template <typename DATA, typename INPUT, typename OUTPUT>
+struct TrainWrapper
+{
+    TrainFunctor * func_;
+    DATA data_;
+
+    TrainWrapper(TrainFunctor * func, DATA data) : func_(func), data_(data) { } 
+
+    OUTPUT operator()(INPUT input)
+    {
+        return (*func_)(data_, input);
+    }
+};
+
 
 #endif /* TRAINFUNCTOR_H */

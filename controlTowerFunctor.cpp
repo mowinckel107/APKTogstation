@@ -1,4 +1,9 @@
 #include "controlTowerFunctor.h"
+#include "trainFunctor.h"
+#include "functorWrapper.h"
+#include <boost/signals2.hpp>
+#include <boost/bind/bind.hpp>
+#include <functional>
 
 ControlTowerFunctor::ControlTowerFunctor(bool managerMode)
 {
@@ -19,7 +24,7 @@ ControlTowerFunctor::ControlTowerFunctor(bool managerMode)
     trainRouteForTrainOutput0.push_back(route12);
 
     // 2
-    RouteVector trainRouteForTrainOutput1
+    RouteVector trainRouteForTrainOutput1;
 
     std::vector<int> route20 {10,12,21,31};
     trainRouteForTrainOutput1.push_back(route20);
@@ -48,7 +53,7 @@ ControlTowerFunctor::ControlTowerFunctor(bool managerMode)
     routes_.insert(std::make_pair(2, trainRouteForTrainOutput2));
 }
 
-TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrackID, int TrainID, TrainFunctor newTrainFunctor)
+TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrackID, int trainID, TrainFunctor * newTrainFunctor)
 {
     // this is GetRouteAndSignals()
 
@@ -57,7 +62,7 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
 
         RouteVector myRoutes = routes_.find(startingTrainTrackID)->second;
 
-        int routeMax = myRoutes::size - 1;
+        int routeMax = myRoutes.size() - 1;
 
         // This will yield trouble if there are more routes for one output than another
         // For example 2 and 3. We count to 3 on one output (max 2), it is reset, and the next output never reached 3.
@@ -73,18 +78,21 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
         TrainCommunicationAndRoute data;
 
         // Choose route depending on starting track. Same as before, but more flexible.       
-        data.route = myRoutes.second[routeCounter];
+        data.route_ = myRoutes[routeCounter];
 
     // 2) Generate leavingSignal_ and isTrainTrackOccupiedSignal_
         std::vector<int> tempRoute;
         std::vector<int> tempTrains;
+
         std::map<int, std::vector<boost::signals2::connection>> trainsAdded;
         std::vector<boost::signals2::connection> tempTrainAdded;
-        std::vector<int> tempRoute;
-        TrainFunctor tempFunctor;
+
+
+        TrainFunctor * tempFunctor;
         boost::signals2::connection c1;
         boost::signals2::connection c2;
         boost::signals2::connection c3;
+        std::map<int, TrainFunctor *>::iterator myIt1;
 
         // Connections representing one track relating to a train
         vectorOfConnections loopTrackConnections;
@@ -98,9 +106,9 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
 
             // Filter route
             tempRoute.clear();
-            for (auto temp1 : data.route)
+            for (int temp1 : data.route_)
             {
-                for (auto temp2 : trainRoutes_[myIt1->first])
+                for (int temp2 : trainRoutes_[myIt1->first])
                 {
                     if (temp1 == temp2)
                     {
@@ -110,48 +118,61 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
             }
 
             // for every track on the new trains route that is also in current train in existence
-            for (auto tempTrack : tempRoute)
+            for (int tempTrack : tempRoute)
             {
                 loopTrackConnections.clear();
 
-                tempTrains = trackTrains[tempTrack];
+                tempTrains = trackTrains_[tempTrack];
 
 
                 // for every train driving through a track on the new trains route
-                for (auto tempTrain : tempTrains)
+                for (int tempTrain : tempTrains)
                 {
                     // We connect functors ONCE per train
                     if (trainsAdded.find(tempTrain) == trainsAdded.end())
                     {
-                        tempFunctor = TrainFunctors_.find(tempTrain)->second;
+                        tempFunctor = trainFunctors_.find(tempTrain)->second;
 
                         // As we can't really pass the trackID, sig should be called as sig(int)
                         // Bound to mode: Train {newTrain} has left track {unknownTrack}
-                        c1 = data.leavingSignal_.connect(boost::bind<bool>(tempFunctor, TrainID));
+                        FunctorWrapper<int, int, void, TrainFunctor> TW1(tempFunctor, trainID);
+
+                        c1 = data.leavingSignal_.connect(TW1);
                         loopTrackConnections.push_back(c1);
 
                         // As we can't really pass the trackID, sig should be called as sig(int)
                         // Bound to mode: Some train is requesting track {unknownTrack}
-                        c2 = data.isTrainTrackOccupiedSignal_.connect(boost::bind<bool>(tempFunctor, true));
+
+                        FunctorWrapper<bool, int, bool, TrainFunctor> TW2(tempFunctor, true);
+                        c2 = data.isTrainTrackOccupiedSignal_.connect(TW2);
                         loopTrackConnections.push_back(c2);
 
                         // As we can't really pass the trackConnection, sig should be called as sig(trackConnectionMap)
                         // Bound to mode: A new train has arrived, and it wants us to know every way it is connected to the existing train we belong to.
-                        c3 = data.birthSignal_.connect(boost::bind<bool>(tempFunctor, TrainID));
+
+                        FunctorWrapper<int, trackConnectionMap, void, TrainFunctor> TW3(tempFunctor, trainID);
                         loopTrackConnections.push_back(c3);
 
                         // Save connections in trainsAdded. We'll need them for when this train shows up again.
-                        trainsAdded.insert(std::make_pair(tempTrain, { c1, c2, c3 }));
+                        tempTrainAdded.clear();
+                        tempTrainAdded.push_back(c1);
+                        tempTrainAdded.push_back(c2);
+                        tempTrainAdded.push_back(c3);
+
+                        trainsAdded.insert(std::make_pair(tempTrain, tempTrainAdded));
 
                     }
                     // We do however log these connections for every time the train shows up under a seperate track
                     else
                     {
                         tempTrainAdded = trainsAdded.find(tempTrain)->second;
-                        loopTrackConnections.insert(loopTrackConnections.end(), tempTrainAdded);
+
+                        for (auto temp4 : tempTrainAdded)
+                        {
+                            loopTrackConnections.push_back(temp4);
+                        }
                     }
                 }
-
                 loopTrainConnections.insert(std::make_pair(tempTrack, loopTrackConnections));
             }
 
@@ -161,12 +182,12 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
 
 
     // 3) Save this route
-        trainRoutes_.insert(std::make_pair(trainID, data.route));
+        trainRoutes_.insert(std::make_pair(trainID, data.route_));
 
     // 4) Save tracks
-        for (auto temp3 in data.route)
+        for (auto temp3 : data.route_)
         {
-            trackTrains_.find(temp3).second->push_back(TrainID);
+            trackTrains_.find(temp3)->second.push_back(trainID);
         }       
 
     // 6) Save train functor
@@ -176,13 +197,13 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
     return data;    
 }
 
-void ControlTowerFunctor::operator()(int TrainTrackID, int TrainID, int direction)
+void ControlTowerFunctor::operator()(int TrainTrackID, int trainID, int direction)
 {
     // this is UpdateTrainCommunicationLeave and UpdateTrainCommunicationEnter in one, with some new features.
 
 
     // In manager mode, ControlTower does most of the work.
-    if (managerMode)
+    if (managerMode_)
     {
         if (direction == 1)
         {
@@ -239,7 +260,7 @@ void ControlTowerFunctor::operator()(int TrainTrackID, int TrainID, int directio
             }
             */
         }
-        else if (mode == 2)
+        else if (direction == 2)
         {
             // skal ikke fjernes, bare tilpasses
             /*
