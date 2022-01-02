@@ -7,19 +7,15 @@
 #include <boost/signals2.hpp>
 #include <iostream> 
 
-class TrainTrack;
-
-
 class Train
 {
    public:
         Train
 		(
-			int InputID,
-			std::vector<int> Route,
-			TrainTrack * startingTrack,
-			boost::signals2::signal<void ()> * inputLeavingSignal,
-			boost::signals2::signal<bool ()> * inputIsTrainTrackOccupiedSignal
+			int ID,
+			std::vector<int> route,
+			TrainTrack * startingTrack
+			ControlTowerFunctor * control
 		);
 		
 		~Train();
@@ -28,17 +24,15 @@ class Train
 
 
 	private:
-		int ID;
-		TrainTrack * CurrentTrack;
-		std::vector<int> route;
-		int progressAlongRoute;
-    	boost::signals2::signal<void ()> * leavingTrainTrackSignal;
-    	boost::signals2::signal<bool ()> * wantToEnterTrainTrackSignal;
-		bool isNotDeleted = true;
+		int ID_;
+		TrainTrack * currentTrack_;
+		ControlTowerFunctor * control_;
+		std::vector<int> route_;
+    	boost::signals2::signal<void (int)> * leavingSignal_;
+    	boost::signals2::signal<bool (int)> * isTrainTrackOccupiedSignal_;
+		boost::signals2::signal<void (trackConnectionMap)> * birthSignal_;
+		bool isNotDeleted_ = true;
 };
-
-
-
 
 
 #endif /* TRAIN_H */
