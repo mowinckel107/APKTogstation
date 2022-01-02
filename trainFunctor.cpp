@@ -7,19 +7,19 @@ TrainFunctor::TrainFunctor(int ownerTrainID)
     ownerTrainID_ = ownerTrainID;
 }
 
-// a Clear reservation
+// Clear reservation
 void TrainFunctor::operator()()
 {
     reservedID_ = 0;
 }
 
-// b Reserve track {trackID}
+// Reserve track {trackID}
 void TrainFunctor::operator()(int trackID)
 {
     reservedID_ = trackID;
 }
 
-// c Train {trainID} has left track {trackID}
+// Train {trainID} has left track {trackID}
 void TrainFunctor::operator()(int trainID, int trackID)
 {
     std::map<int, vectorOfConnections> foundTrain = trainTrackConnections_.find(trainID)->second;
@@ -46,12 +46,12 @@ bool TrainFunctor::operator()(bool isRequest, int trackID)
     // I am currently sitting on this ID
     if (reservedID_ == trackID)
     {
-        return false;
+        return true;
     }
     // I am not in the way
     else
     {
-        return true;
+        return false;
     }
 }
 
