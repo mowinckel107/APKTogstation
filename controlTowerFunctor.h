@@ -3,28 +3,30 @@
 
 #include <boost/signals2.hpp>
 #include <boost/bind/bind.hpp>
-#include "trainTrack.h"
 #include "train.h"
 #include "trainFunctor.h"
 #include <vector>
 #include <map>
 
+// compiler seems to be weird with circular includes
+class Train;
+
 using RouteVector = std::vector<std::vector<int>>;
 
 struct TrainCommunicationAndRoute
 {
-    boost::signals2::signal<void (int)> leavingSignal_;
+    boost::signals2::signal<bool (int)> leavingSignal_;
     boost::signals2::signal<bool (int)> isTrainTrackOccupiedSignal_;
-    boost::signals2::signal<void (trackConnectionMap)> birthSignal_;
+    boost::signals2::signal<bool (trackConnectionMap)> birthSignal_;
     trainTrackConnectionMap trainTrackConnections_;
     std::vector<int> route_;
 };
 
 struct TrainTracker
 {
-    boost::signals2::signal<void (int)> * leavingSignal_;
+    boost::signals2::signal<bool (int)> * leavingSignal_;
     boost::signals2::signal<bool (int)> * isTrainTrackOccupiedSignal_;
-}
+};
 
 class ControlTowerFunctor
 {

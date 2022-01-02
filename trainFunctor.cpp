@@ -5,22 +5,28 @@
 TrainFunctor::TrainFunctor(int ownerTrainID)
 {
     ownerTrainID_ = ownerTrainID;
+
+    return true;
 }
 
 // Clear reservation
-void TrainFunctor::operator()()
+bool TrainFunctor::operator()()
 {
     reservedID_ = 0;
+
+    return true;
 }
 
 // Reserve track {trackID}
-void TrainFunctor::operator()(int trackID)
+bool TrainFunctor::operator()(int trackID)
 {
     reservedID_ = trackID;
+
+    return true;    
 }
 
 // Train {trainID} has left track {trackID}
-void TrainFunctor::operator()(int trainID, int trackID)
+bool TrainFunctor::operator()(int trainID, int trackID)
 {
     std::map<int, vectorOfConnections> foundTrain = trainTrackConnections_.find(trainID)->second;
     vectorOfConnections foundTrack = foundTrain.find(trackID)->second;
@@ -37,6 +43,8 @@ void TrainFunctor::operator()(int trainID, int trackID)
     // The chosen track in relation to train {trainID} does no longer have any links
     foundTrack.clear();
     foundTrain.erase(trackID);
+
+    return true;    
 }
 
 
@@ -56,13 +64,17 @@ bool TrainFunctor::operator()(bool isRequest, int trackID)
 }
 
 // We belong to a new train and we need to be fed with a list of how everyone else is connected to us
-void TrainFunctor::operator()(trainTrackConnectionMap trainTrackConnections)
+bool TrainFunctor::operator()(trainTrackConnectionMap trainTrackConnections)
 {
     trainTrackConnections_ = trainTrackConnections;
+
+    return true;
 }
 
 // A new train has arrived, and it wants us to know every way it is connected to the existing train we belong to.
-void TrainFunctor::operator()(int newTrainID, trackConnectionMap trackConnection)
+bool TrainFunctor::operator()(int newTrainID, trackConnectionMap trackConnection)
 {
     trainTrackConnections_.insert ( std::pair<int, trackConnectionMap>(newTrainID, trackConnection) );
+
+    return true;
 }

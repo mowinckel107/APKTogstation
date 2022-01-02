@@ -15,7 +15,7 @@ class TrainTrack
     public:
         TrainTrack(std::map<int, TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID);
         TrainTrack* GetNextTrainTrack(int trainTrackNumber);
-        virtual void EnterTrainTracks(Train* IncomingTrain);
+        virtual bool EnterTrainTracks(Train* IncomingTrain);
         void LeaveTrainTrack(void);
         int GetID(void);
 
@@ -40,7 +40,7 @@ class TrainInput : public TrainTrack
         TrainInput(std::map<int, TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
         {}
 
-        void EnterTrainTracks(Train* IncomingTrain);
+        bool EnterTrainTracks(Train* IncomingTrain);
 };
 
 // This class creates trains, simulating them entering the area

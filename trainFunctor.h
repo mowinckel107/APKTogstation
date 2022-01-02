@@ -21,29 +21,31 @@ private:
     trainTrackConnectionMap trainTrackConnections_;
 
 public:
-
     // Setup
-    TrainFunctor(int ownerTrainID);
+    TrainFunctor(int ownerTrainID = 0);
 
     // Clear reservation
-    void operator()();
+    bool operator()();
 
     // Reserve track {trackID}
-    void operator()(int trackID);
+    bool operator()(int trackID);
 
     // Train {trainID} has left track {trackID}
-    void operator()(int trainID, int trackID);
+    bool operator()(int trainID, int trackID);
 
     // Some train is requesting track {TrackID}
     bool operator()(bool isRequest, int trackID);
 
     // We belong to a new train and we need to be fed with a list of how everyone else is connected to us
-    void operator()(trainTrackConnectionMap trainTrackConnections);
+    bool operator()(trainTrackConnectionMap trainTrackConnections);
 
     // A new train has arrived, and it wants us to know every way it is connected to the existing train we belong to.
-    void operator()(int newTrainID, trackConnectionMap trackConnection);
+    bool operator()(int newTrainID, trackConnectionMap trackConnection);
 
 };
+
+typedef TrainFunctor::result_type bool;
+
 
 
 #endif /* TRAINFUNCTOR_H */

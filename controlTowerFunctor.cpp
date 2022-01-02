@@ -143,7 +143,7 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
 
                             // As we can't really pass the trackID, sig should be called as sig(int)
                             // Bound to mode: Train {newTrain} has left track {unknownTrack}
-                            FunctorWrapper<int, int, void, TrainFunctor> TW1(tempFunctor, trainID);
+                            FunctorWrapper<int, int, bool, TrainFunctor> TW1(tempFunctor, trainID);
 
                             c1 = data.leavingSignal_.connect(TW1);
                             loopTrackConnections.push_back(c1);
@@ -158,7 +158,7 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
                             // As we can't really pass the trackConnection, sig should be called as sig(trackConnectionMap)
                             // Bound to mode: A new train has arrived, and it wants us to know every way it is connected to the existing train we belong to.
 
-                            FunctorWrapper<int, trackConnectionMap, void, TrainFunctor> TW3(tempFunctor, trainID);
+                            FunctorWrapper<int, trackConnectionMap, bool, TrainFunctor> TW3(tempFunctor, trainID);
                             loopTrackConnections.push_back(c3);
 
                             // Save connections in trainsAdded. We'll need them for when this train shows up again.
@@ -220,8 +220,8 @@ void ControlTowerFunctor::operator()(int trainTrackID, int trainID)
     }
 
     // Collect track information
-    vector<int> * route = &(trainRoutes_.find(trainID)->second);
-    vector<int> * trainsOnTrack = &(trackTrains_.find(trainTrackID)->second);
+    std::vector<int> * route = &(trainRoutes_.find(trainID)->second);
+    std::vector<int> * trainsOnTrack = &(trackTrains_.find(trainTrackID)->second);
 
     int routeSize = route->size();
     if (routeSize == 0)
@@ -263,14 +263,14 @@ void ControlTowerFunctor::operator()(int trainTrackID, int trainID)
         if(trainTrackerIterator != trainTrackers_.end())
         {   
             // Remove old connections
-            trainTrackerIterator->second.leavingSignal_.disconnect_all_slots();
-            trainTrackerIterator->second.isTrainTrackOccupiedSignal.disconnect_all_slots();
+            trainTrackerIterator->second.leavingSignal_->disconnect_all_slots();
+            trainTrackerIterator->second.isTrainTrackOccupiedSignal_->disconnect_all_slots();
 
             // make sure we there is at least 1 more TrainTrack on the route
             if(routeSize > 0)
             {
-                std::vector<int>::iterator trainsEnteringIt trackTrains_.find(trackThatTrainIsEntering);
-                std::vector<int>::iterator trainsEnterNextIt trackTrains_.find(trackThatTrainWillEnterNext);
+                std::map<int, std::vector<int>>::iterator trainsEnteringIt = trackTrains_.find(trackThatTrainIsEntering);
+                std::map<int, std::vector<int>>::iterator trainsEnterNextIt = trackTrains_.find(trackThatTrainWillEnterNext);
 
                 if (trackTrains_.end() == trainsEnteringIt || trackTrains_.end() == trainsEnterNextIt)
                 {
@@ -280,26 +280,26 @@ void ControlTowerFunctor::operator()(int trainTrackID, int trainID)
                 std::vector<int> trainsEntering = trainsEnteringIt->second;
                 std::vector<int> trainsEnterNext = trainsEnterNextIt->second;
 
-                std::map<int, TrainSignalFunctor>::iterator trainSignalFunctorIterator;
+                std::map<int, TrainFunctor *>::iterator trainFunctorIterator;
 
                 // Find correct functor via TrainTrackID
-                for (trainEntering : trainsEntering)
+                for (auto trainEntering : trainsEntering)
                 {
-                    trainSignalFunctorIterator = trainSignalFunctors.find(trainEntering);
+                    trainFunctorIterator = trainFunctors_.find(trainEntering);
                     
                     // If train still exists
-                    if(trainSignalFunctorIterator != trainSignalFunctors.end())
+                    if(trainFunctorIterator != trainFunctors_.end())
                     {
 
                         // We connect the functor up to the boost:signal, but using boost::bind to fill in the arguments so they are not needed when calling the boost::signal
-                        trainTrackerIterator->second.leavingSignal_.connect
+                        trainTrackerIterator->second.leavingSignal_->connect
                         (
-                            // typedef boost::signals2::signal<void (int)>::slot_type leavingSignalBind
+                            // typedef boost::signals2::signal<bool (int)>::slot_type leavingSignalBind
                             // this uses boost::bind automatically
                             // https://www.boost.org/doc/libs/1_49_0/doc/html/signals2/tutorial.html#signals2.tutorial.connection-management
                             // https://stackoverflow.com/questions/10752844/signals-and-binding-arguments
                             leavingSignalBind(
-                                *(trainSignalFunctorIterator->second),trainID,std::placeholder:_1
+                                *(trainFunctorIterator->second),trainID,std::placeholders::_1
                             )
                         );                   
                     }
@@ -309,14 +309,14 @@ void ControlTowerFunctor::operator()(int trainTrackID, int trainID)
                     }
                 }
 
-                for (trainEnterNext : trainsEnterNext)
+                for (auto trainEnterNext : trainsEnterNext)
                 {
-                    trainSignalFunctorIterator = trainSignalFunctors.find(trainEntering);
+                    trainFunctorIterator = trainFunctors_.find(trainEnterNext);
 
                     // If train still exists
-                    if(trainSignalFunctorIterator != trainSignalFunctors.end())
+                    if(trainFunctorIterator != trainFunctors_.end())
                     {
-                        trainTrackerIterator->second.isTrainTrackOccupiedSignal_.connect
+                        trainTrackerIterator->second.isTrainTrackOccupiedSignal_->connect
                         (
                             // typedef boost::signals2::signal<bool (int)>::slot_type isTrainOccupiedSignalBind
                             // this uses boost::bind automatically
@@ -324,7 +324,7 @@ void ControlTowerFunctor::operator()(int trainTrackID, int trainID)
                             // https://stackoverflow.com/questions/10752844/signals-and-binding-arguments
                             isTrainOccupiedSignalBind
                             (
-                                *(trainSignalFunctorIterator->second),true,trainID
+                                *(trainFunctorIterator->second),true,std::placeholders::_1
                             )
                         );
                     }
@@ -332,7 +332,7 @@ void ControlTowerFunctor::operator()(int trainTrackID, int trainID)
                     {
                         throw "UpdateTrainCommunicationLeave tried to get a TrainFunctor that could not be found";
                     }
-                }      
+                }
             }
         }
         else

@@ -1,12 +1,10 @@
 #include "train.h"
 
-
-
 Train::Train
 (
     int ID,
     std::vector<int> route,
-    TrainTrack * startingTrack
+    TrainTrack * startingTrack,
     ControlTowerFunctor * control
 )
 {
@@ -14,35 +12,43 @@ Train::Train
     route_ = route;
     currentTrack_ = startingTrack;
     control_ = control;
+    TrainFunctor trainFunctor_(ID_);
 
 }
 
 Train::~Train()
 {
-    isNotDeleted = false;
+    isNotDeleted_ = false;
 }
     
-
 void Train::StartDriveLoop(void)
 {
     boost::asio::io_context io;
     boost::asio::steady_timer t(io);
-    TrainTrack* nextTrainTrack;
 
-    while(isNotDeleted)
-    {
+    TrainTrack * nextTrack;
+    int nextTrackID = 0;
+    int currentTrackID = currentTrack_->GetID();
 
+    while(isNotDeleted_)
+    {   
         // Delay
         t.expires_after(boost::asio::chrono::seconds(1));
         t.wait();
 
-        CurrentTrack_ = CurrentTrack_->GetNextTrainTrack(route_);
-        route_.erase(route_.begin());
+        // We need a route
+        if (route_.size() > 0)
+        {
+            nextTrackID = route_.at(0);
+        }
+
+        nextTrack = currentTrack_->GetNextTrainTrack(nextTrackID);
+        route_.erase(route_.begin());       
 
         bool isNextTrainTrackOccupied = true;
         while(isNextTrainTrackOccupied)
         {
-            if (isTrainTrackOccupiedSignal_())
+            if (isTrainTrackOccupiedSignal_(nextTrackID))
             {
                 t.expires_after(boost::asio::chrono::milliseconds(100));
                 t.wait();
@@ -54,21 +60,26 @@ void Train::StartDriveLoop(void)
         }
 
         // Tell track we're leaving
-        CurrentTrack->LeaveTrainTrack();
+        currentTrack_->LeaveTrainTrack();
 
         // Tell relevant trains that we're leaving
-        leavingSignal_();
+        leavingSignal_(currentTrackID);
 
         // Tell control tower we're leaving and entering a new track
-        control_(CurrentTrackID, ID);
+        (*control_)(currentTrackID, ID_);
 
         // Tell track we're entering
         // Train may get deleted here if TrainTrack is a TrainInput
-        isNotDeleted = CurrentTrack->EnterTrainTracks(this);
+        if (!nextTrack->EnterTrainTracks(this) || !isNotDeleted_)
+        {
+            break;
+        }
+        currentTrack_ = nextTrack;
+
     }
 }
 
 int Train::GetID(void)
 {
-    return ID;
+    return ID_;
 }

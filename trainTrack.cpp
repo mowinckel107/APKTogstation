@@ -26,7 +26,7 @@
 
 
 
-    void TrainTrack::EnterTrainTracks(Train* IncomingTrain)
+    bool TrainTrack::EnterTrainTracks(Train* IncomingTrain)
     {
         // if a train is already on this traintrack
         if(!(TrainOnTrack == nullptr))
@@ -37,6 +37,7 @@
         {
             TrainOnTrack = IncomingTrain;
         }
+        return true;
     }
 
     void TrainTrack::LeaveTrainTrack(void)
@@ -51,9 +52,10 @@
 
 
 
-   void TrainInput::EnterTrainTracks(Train* IncomingTrain)
+   bool TrainInput::EnterTrainTracks(Train* IncomingTrain)
     {
         delete IncomingTrain;
+        return false;
     }
 
 

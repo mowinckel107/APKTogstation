@@ -3,19 +3,22 @@
 
 #include "trainTrack.h"
 #include "trainFunctor.h"
+#include "controlTowerFunctor.h"
 #include <vector>
 #include <boost/asio.hpp>
 #include <boost/signals2.hpp>
 #include <iostream> 
 
-
 // https://stackoverflow.com/questions/10752844/signals-and-binding-arguments
-typedef boost::signals2::signal<void (int)> leavingType;
-typedef leavingSlotType::slot_type leavingSlotType;
+// Generate slot types for slots so that we can have placeholder argyments
+typedef boost::signals2::signal<bool (int)> leavingSignalType;
+typedef leavingSignalType::slot_type leavingSignalBind;
+typedef boost::signals2::signal<bool (int)> occupiedSignalType;
+typedef occupiedSignalType::slot_type isTrainOccupiedSignalBind;
 
-typedef boost::signals2::signal<bool (int)> occupiedType;
-typedef leavingSlotType::slot_type occupiedSlotType;
-
+// compiler seems to be weird with circular includes
+class TrainTrack;
+class ControlTowerFunctor;
 
 class Train
 {
@@ -24,7 +27,7 @@ class Train
 		(
 			int ID,
 			std::vector<int> route,
-			TrainTrack * startingTrack
+			TrainTrack * startingTrack,
 			ControlTowerFunctor * control
 		);
 		
@@ -33,6 +36,7 @@ class Train
 		int GetID(void);
 
 		TrainFunctor trainFunctor_;
+		bool isNotDeleted_ = true;
 
 	private:
 		int ID_;
@@ -40,10 +44,9 @@ class Train
 		TrainTrack * currentTrack_;
 		ControlTowerFunctor * control_;
 		std::vector<int> route_;
-    	boost::signals2::signal<void (int)> leavingSignal_;
+    	boost::signals2::signal<bool (int)> leavingSignal_;
     	boost::signals2::signal<bool (int)> isTrainTrackOccupiedSignal_;
-		boost::signals2::signal<void (trackConnectionMap)> birthSignal_;
-		bool isNotDeleted_ = true;
+		boost::signals2::signal<bool (trackConnectionMap)> birthSignal_;
 };
 
 
