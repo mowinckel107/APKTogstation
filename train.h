@@ -2,6 +2,7 @@
 #define TRAIN_H
 
 #include "trainTrack.h"
+#include "trainFunctor.h"
 #include <vector>
 #include <boost/asio.hpp>
 #include <boost/signals2.hpp>
@@ -22,10 +23,11 @@ class Train
 		void StartDriveLoop(void);
 		int GetID(void);
 
+		TrainFunctor trainFunctor_;
 
 	private:
 		int ID_;
-		bool ControlTowerMode;
+		bool ControlTowerManagerMode;
 		TrainTrack * currentTrack_;
 		ControlTowerFunctor * control_;
 		std::vector<int> route_;
