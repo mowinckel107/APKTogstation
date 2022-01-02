@@ -29,9 +29,9 @@ class Train
 		TrainTrack * currentTrack_;
 		ControlTowerFunctor * control_;
 		std::vector<int> route_;
-    	boost::signals2::signal<void (int)> * leavingSignal_;
-    	boost::signals2::signal<bool (int)> * isTrainTrackOccupiedSignal_;
-		boost::signals2::signal<void (trackConnectionMap)> * birthSignal_;
+    	boost::signals2::signal<void (int)> leavingSignal_;
+    	boost::signals2::signal<bool (int)> isTrainTrackOccupiedSignal_;
+		boost::signals2::signal<void (trackConnectionMap)> birthSignal_;
 		bool isNotDeleted_ = true;
 };
 
