@@ -25,6 +25,7 @@ class Train
 
 	private:
 		int ID_;
+		bool ControlTowerMode;
 		TrainTrack * currentTrack_;
 		ControlTowerFunctor * control_;
 		std::vector<int> route_;
