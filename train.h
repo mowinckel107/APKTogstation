@@ -8,6 +8,15 @@
 #include <boost/signals2.hpp>
 #include <iostream> 
 
+
+// https://stackoverflow.com/questions/10752844/signals-and-binding-arguments
+typedef boost::signals2::signal<void (int)> leavingType;
+typedef leavingSlotType::slot_type leavingSlotType;
+
+typedef boost::signals2::signal<bool (int)> occupiedType;
+typedef leavingSlotType::slot_type occupiedSlotType;
+
+
 class Train
 {
    public:
@@ -27,7 +36,7 @@ class Train
 
 	private:
 		int ID_;
-		bool ControlTowerManagerMode;
+		bool controlTowerManagerMode_;
 		TrainTrack * currentTrack_;
 		ControlTowerFunctor * control_;
 		std::vector<int> route_;

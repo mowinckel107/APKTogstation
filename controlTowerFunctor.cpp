@@ -73,7 +73,6 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
         }
 
         // TrainCommunicationAndRoute which is the return type used for Train.
-        // This is TrainTracker and TrainCommunicationAndRoute in one.
         // Renamed it data because code was getting ridiculous
         TrainCommunicationAndRoute data;
 
@@ -81,105 +80,114 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
         data.route_ = myRoutes[routeCounter];
 
     // 2) Generate leavingSignal_ and isTrainTrackOccupiedSignal_
-        std::vector<int> tempRoute;
-        std::vector<int> tempTrains;
-
-        std::map<int, std::vector<boost::signals2::connection>> trainsAdded;
-        std::vector<boost::signals2::connection> tempTrainAdded;
-
-
-        TrainFunctor * tempFunctor;
-        boost::signals2::connection c1;
-        boost::signals2::connection c2;
-        boost::signals2::connection c3;
-        std::map<int, TrainFunctor *>::iterator myIt1;
-
-        // Connections representing one track relating to a train
-        vectorOfConnections loopTrackConnections;
-        trackConnectionMap loopTrainConnections;
-        trainTrackConnectionMap loopTrainTrackConnections;
-
-        // for every train in existence
-        for (myIt1 = trainFunctors_.begin(); myIt1 != trainFunctors_.end(); myIt1++)
+    // What happens now depends on if we're in managerMode. 
+        // If we are, we generate just enough for the trains to know when to send for help.
+        if (managerMode_ == true)
         {
-            loopTrainConnections.clear();
+            // todo
+        }
+        // If we're not, we generate pretty much everything the train needs to do everything itself.
+        else
+        {
+            std::vector<int> tempRoute;
+            std::vector<int> tempTrains;
 
-            // Filter route
-            tempRoute.clear();
-            for (int temp1 : data.route_)
+            std::map<int, std::vector<boost::signals2::connection>> trainsAdded;
+            std::vector<boost::signals2::connection> tempTrainAdded;
+
+
+            TrainFunctor * tempFunctor;
+            boost::signals2::connection c1;
+            boost::signals2::connection c2;
+            boost::signals2::connection c3;
+            std::map<int, TrainFunctor *>::iterator myIt1;
+
+            // Connections representing one track relating to a train
+            vectorOfConnections loopTrackConnections;
+            trackConnectionMap loopTrainConnections;
+            trainTrackConnectionMap loopTrainTrackConnections;
+
+            // for every train in existence
+            for (myIt1 = trainFunctors_.begin(); myIt1 != trainFunctors_.end(); myIt1++)
             {
-                for (int temp2 : trainRoutes_[myIt1->first])
+                loopTrainConnections.clear();
+
+                // Filter route
+                tempRoute.clear();
+                for (int temp1 : data.route_)
                 {
-                    if (temp1 == temp2)
+                    for (int temp2 : trainRoutes_[myIt1->first])
                     {
-                        tempRoute.push_back(temp1);
-                    }
-                }
-            }
-
-            // for every track on the new trains route that is also in current train in existence
-            for (int tempTrack : tempRoute)
-            {
-                loopTrackConnections.clear();
-
-                tempTrains = trackTrains_[tempTrack];
-
-
-                // for every train driving through a track on the new trains route
-                for (int tempTrain : tempTrains)
-                {
-                    // We connect functors ONCE per train
-                    if (trainsAdded.find(tempTrain) == trainsAdded.end())
-                    {
-                        tempFunctor = trainFunctors_.find(tempTrain)->second;
-
-                        // As we can't really pass the trackID, sig should be called as sig(int)
-                        // Bound to mode: Train {newTrain} has left track {unknownTrack}
-                        FunctorWrapper<int, int, void, TrainFunctor> TW1(tempFunctor, trainID);
-
-                        c1 = data.leavingSignal_.connect(TW1);
-                        loopTrackConnections.push_back(c1);
-
-                        // As we can't really pass the trackID, sig should be called as sig(int)
-                        // Bound to mode: Some train is requesting track {unknownTrack}
-
-                        FunctorWrapper<bool, int, bool, TrainFunctor> TW2(tempFunctor, true);
-                        c2 = data.isTrainTrackOccupiedSignal_.connect(TW2);
-                        loopTrackConnections.push_back(c2);
-
-                        // As we can't really pass the trackConnection, sig should be called as sig(trackConnectionMap)
-                        // Bound to mode: A new train has arrived, and it wants us to know every way it is connected to the existing train we belong to.
-
-                        FunctorWrapper<int, trackConnectionMap, void, TrainFunctor> TW3(tempFunctor, trainID);
-                        loopTrackConnections.push_back(c3);
-
-                        // Save connections in trainsAdded. We'll need them for when this train shows up again.
-                        tempTrainAdded.clear();
-                        tempTrainAdded.push_back(c1);
-                        tempTrainAdded.push_back(c2);
-                        tempTrainAdded.push_back(c3);
-
-                        trainsAdded.insert(std::make_pair(tempTrain, tempTrainAdded));
-
-                    }
-                    // We do however log these connections for every time the train shows up under a seperate track
-                    else
-                    {
-                        tempTrainAdded = trainsAdded.find(tempTrain)->second;
-
-                        for (auto temp4 : tempTrainAdded)
+                        if (temp1 == temp2)
                         {
-                            loopTrackConnections.push_back(temp4);
+                            tempRoute.push_back(temp1);
                         }
                     }
                 }
-                loopTrainConnections.insert(std::make_pair(tempTrack, loopTrackConnections));
+
+                // for every track on the new trains route that is also in current train in existence
+                for (int tempTrack : tempRoute)
+                {
+                    loopTrackConnections.clear();
+
+                    tempTrains = trackTrains_[tempTrack];
+
+
+                    // for every train driving through a track on the new trains route
+                    for (int tempTrain : tempTrains)
+                    {
+                        // We connect functors ONCE per train
+                        if (trainsAdded.find(tempTrain) == trainsAdded.end())
+                        {
+                            tempFunctor = trainFunctors_.find(tempTrain)->second;
+
+                            // As we can't really pass the trackID, sig should be called as sig(int)
+                            // Bound to mode: Train {newTrain} has left track {unknownTrack}
+                            FunctorWrapper<int, int, void, TrainFunctor> TW1(tempFunctor, trainID);
+
+                            c1 = data.leavingSignal_.connect(TW1);
+                            loopTrackConnections.push_back(c1);
+
+                            // As we can't really pass the trackID, sig should be called as sig(int)
+                            // Bound to mode: Some train is requesting track {unknownTrack}
+
+                            FunctorWrapper<bool, int, bool, TrainFunctor> TW2(tempFunctor, true);
+                            c2 = data.isTrainTrackOccupiedSignal_.connect(TW2);
+                            loopTrackConnections.push_back(c2);
+
+                            // As we can't really pass the trackConnection, sig should be called as sig(trackConnectionMap)
+                            // Bound to mode: A new train has arrived, and it wants us to know every way it is connected to the existing train we belong to.
+
+                            FunctorWrapper<int, trackConnectionMap, void, TrainFunctor> TW3(tempFunctor, trainID);
+                            loopTrackConnections.push_back(c3);
+
+                            // Save connections in trainsAdded. We'll need them for when this train shows up again.
+                            tempTrainAdded.clear();
+                            tempTrainAdded.push_back(c1);
+                            tempTrainAdded.push_back(c2);
+                            tempTrainAdded.push_back(c3);
+
+                            trainsAdded.insert(std::make_pair(tempTrain, tempTrainAdded));
+
+                        }
+                        // We do however log these connections for every time the train shows up under a seperate track
+                        else
+                        {
+                            tempTrainAdded = trainsAdded.find(tempTrain)->second;
+
+                            for (auto temp4 : tempTrainAdded)
+                            {
+                                loopTrackConnections.push_back(temp4);
+                            }
+                        }
+                    }
+                    loopTrainConnections.insert(std::make_pair(tempTrack, loopTrackConnections));
+                }
+
+                loopTrainTrackConnections.insert(std::make_pair(myIt1->first, loopTrainConnections));
             }
-
-            loopTrainTrackConnections.insert(std::make_pair(myIt1->first, loopTrainConnections));
+            data.trainTrackConnections_ = loopTrainTrackConnections; // mov?
         }
-        data.trainTrackConnections_ = loopTrainTrackConnections; // mov?
-
 
     // 3) Save this route
         trainRoutes_.insert(std::make_pair(trainID, data.route_));
@@ -197,117 +205,149 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
     return data;    
 }
 
-void ControlTowerFunctor::operator()(int TrainTrackID, int trainID, int direction)
+void ControlTowerFunctor::operator()(int trainTrackID, int trainID)
 {
     // this is UpdateTrainCommunicationLeave and UpdateTrainCommunicationEnter in one, with some new features.
 
+    // Does route and train exist?
+    if (trainRoutes_.find(trainID) == trainRoutes_.end())
+    {
+        throw "ControlTowerUpdater: Route could not be found using trainID";
+    }
+    if (trackTrains_.find(trainTrackID) == trackTrains_.end())
+    {
+        throw "ControlTowerUpdater: Track could not be found using trainTrackID";
+    }
 
-    // In manager mode, ControlTower does most of the work.
+    // Collect track information
+    vector<int> * route = &(trainRoutes_.find(trainID)->second);
+    vector<int> * trainsOnTrack = &(trackTrains_.find(trainTrackID)->second);
+
+    int routeSize = route->size();
+    if (routeSize == 0)
+    {
+        throw "ControlTowerUpdater: Train route is empty";
+    }
+   
+    int trackThatTrainIsEntering = route->at(0);
+
+    int trackThatTrainWillEnterNext;
+    if (routeSize > 1)
+    {
+        trackThatTrainWillEnterNext = route->at(1);
+    }
+    else
+    {
+        trackThatTrainWillEnterNext = 0;
+    }
+
+    // Delete information that we no longer need
+    route->erase(route->begin());
+    routeSize--;
+
+    std::vector<int>::iterator ttIt1;
+    for (ttIt1 = trainsOnTrack->begin(); ttIt1 != trainsOnTrack->end(); ttIt1++)
+    {
+        if (*ttIt1 == trainID)
+        {
+            trainsOnTrack->erase(ttIt1);
+        }
+    }
+
+    // In manager mode, ControlTower does most of the work instead of train.
     if (managerMode_)
     {
-        if (direction == 1)
-        {
-            // Skal ikke fjernes, bare tilpasses
-            /*
-            std::map<int, TrainTracker>::iterator trainTrackerIterator = trainTrackers.find(trainID);
+        std::map<int, TrainTracker>::iterator trainTrackerIterator = trainTrackers_.find(trainID);
 
-            // if trainID exists
-            if(trainTrackerIterator != trainTrackers.end())
-            {   
-                // Remove old connection.
-                trainTrackerIterator->second.leavingSignal.disconnect_all_slots();
+        // if trainID exists
+        if(trainTrackerIterator != trainTrackers_.end())
+        {   
+            // Remove old connections
+            trainTrackerIterator->second.leavingSignal_.disconnect_all_slots();
+            trainTrackerIterator->second.isTrainTrackOccupiedSignal.disconnect_all_slots();
 
-                // Find the new functor via TrainTrackID
+            // make sure we there is at least 1 more TrainTrack on the route
+            if(routeSize > 0)
+            {
+                std::vector<int>::iterator trainsEnteringIt trackTrains_.find(trackThatTrainIsEntering);
+                std::vector<int>::iterator trainsEnterNextIt trackTrains_.find(trackThatTrainWillEnterNext);
 
-                // if the train is leaving the second last TrainTrack, it will be deleted
-                if(trainTrackerIterator->second.route.size() == trainTrackerIterator->second.howFarAlongRoute)
+                if (trackTrains_.end() == trainsEnteringIt || trackTrains_.end() == trainsEnterNextIt)
                 {
-                    // Delete TrainTracker object now that the related Train object will be deleted
-                    trainTrackers.erase(trainTrackerIterator);
+                    throw "ControlTowerUpdater: Tried to update signals even though there is no trackThatTrainWillEnterNext";
                 }
-                // make sure we there is at least 1 more TrainTrack on the route
-                else if(trainTrackerIterator->second.route.size() < trainTrackerIterator->second.howFarAlongRoute)
+
+                std::vector<int> trainsEntering = trainsEnteringIt->second;
+                std::vector<int> trainsEnterNext = trainsEnterNextIt->second;
+
+                std::map<int, TrainSignalFunctor>::iterator trainSignalFunctorIterator;
+
+                // Find correct functor via TrainTrackID
+                for (trainEntering : trainsEntering)
                 {
-                    trainTrackerIterator->second.howFarAlongRoute++;
-                    // find TrainTrackID for the next TrainTrack
-                    int TrainTrackID = trainTrackerIterator->second.route[trainTrackerIterator->second.howFarAlongRoute];
-
-                    // Find correct functor via TrainTrackID
-                    std::map<int, TrainSignalFunctor>::iterator trainSignalFunctorIterator = trainSignalFunctors.find(TrainTrackID);
-
-                    // if TrainTrackID exists
+                    trainSignalFunctorIterator = trainSignalFunctors.find(trainEntering);
+                    
+                    // If train still exists
                     if(trainSignalFunctorIterator != trainSignalFunctors.end())
                     {
+
                         // We connect the functor up to the boost:signal, but using boost::bind to fill in the arguments so they are not needed when calling the boost::signal
-                        trainTrackerIterator->second.leavingSignal.connect
+                        trainTrackerIterator->second.leavingSignal_.connect
                         (
-                            // note, the return value is not actually used in this signal, but needs to be specificed anyway
-                            boost::bind<bool>
+                            // typedef boost::signals2::signal<void (int)>::slot_type leavingSignalBind
+                            // this uses boost::bind automatically
+                            // https://www.boost.org/doc/libs/1_49_0/doc/html/signals2/tutorial.html#signals2.tutorial.connection-management
+                            // https://stackoverflow.com/questions/10752844/signals-and-binding-arguments
+                            leavingSignalBind(
+                                *(trainSignalFunctorIterator->second),trainID,std::placeholder:_1
+                            )
+                        );                   
+                    }
+                    else
+                    {
+                        throw "UpdateTrainCommunicationLeave tried to get a TrainFunctor that could not be found";
+                    }
+                }
+
+                for (trainEnterNext : trainsEnterNext)
+                {
+                    trainSignalFunctorIterator = trainSignalFunctors.find(trainEntering);
+
+                    // If train still exists
+                    if(trainSignalFunctorIterator != trainSignalFunctors.end())
+                    {
+                        trainTrackerIterator->second.isTrainTrackOccupiedSignal_.connect
+                        (
+                            // typedef boost::signals2::signal<bool (int)>::slot_type isTrainOccupiedSignalBind
+                            // this uses boost::bind automatically
+                            // https://www.boost.org/doc/libs/1_49_0/doc/html/signals2/tutorial.html#signals2.tutorial.connection-management
+                            // https://stackoverflow.com/questions/10752844/signals-and-binding-arguments
+                            isTrainOccupiedSignalBind
                             (
-                                trainSignalFunctorIterator->second,false,trainID
+                                *(trainSignalFunctorIterator->second),true,trainID
                             )
                         );
                     }
                     else
                     {
-                        throw "UpdateTrainCommunicationLeave got called with TrainTrackID that could not be found";
+                        throw "UpdateTrainCommunicationLeave tried to get a TrainFunctor that could not be found";
                     }
-                }
+                }      
             }
-            else
-            {
-                throw "UpdateTrainCommunicationLeave got called with trainID that could not be found";
-            }
-            */
         }
-        else if (direction == 2)
+        else
         {
-            // skal ikke fjernes, bare tilpasses
-            /*
-            std::map<int, TrainTracker>::iterator trainTrackerIterator = trainTrackers.find(trainID);
-
-            // if trainID exists
-            if(trainTrackerIterator != trainTrackers.end())
-            {   
-                // Remove old connection.
-                trainTrackerIterator->second.isTrainTrackOccupiedSignal.disconnect_all_slots();
-
-                // Find the new functor via TrainTrackID
-
-                // make sure we there is at least 1 more TrainTrack on the route
-                if(trainTrackerIterator->second.route.size() < trainTrackerIterator->second.howFarAlongRoute)
-                {  
-                    // incriment how far along the route the train is
-                    // find TrainTrackID for the next TrainTrack
-                    int TrainTrackID = trainTrackerIterator->second.route[trainTrackerIterator->second.howFarAlongRoute+1];
-
-                    // Find correct functor via TrainTrackID
-                    std::map<int, TrainSignalFunctor>::iterator trainSignalFunctorIterator = trainSignalFunctors.find(TrainTrackID);
-
-                    // if TrainTrackID exists
-                    if(trainSignalFunctorIterator != trainSignalFunctors.end())
-                    {
-                        // We connect the functor up to the boost:signal, but using boost::bind to fill in the arguments so they are not needed when calling the boost::signal
-                        trainTrackerIterator->second.isTrainTrackOccupiedSignal.connect
-                        (
-                            boost::bind<bool>
-                            (
-                                trainSignalFunctorIterator->second,true,trainID
-                            )
-                        );
-                    }
-                    else
-                    {
-                        throw "UpdateTrainCommunicationLeave got called with TrainTrackID that could not be found";
-                    }
-                }
-            }
-            else
-            {
-                throw "UpdateTrainCommunicationEnter got called with trainID that could not be found";
-            }
-            */
+            throw "UpdateTrainCommunicationLeave got called with trainID that could not be found";
         }
+    }
+
+    // If route has finished, remove train completely
+    if (route->size() == 0)
+    {
+        trainFunctors_.erase(trainID);
+        trainTrackers_.erase(trainID);
+        trainRoutes_.erase(trainID);
+        return;
     }
 
 }

@@ -4,19 +4,16 @@
 
 Train::Train
 (
-    int InputID,
-    std::vector<int> Route,
-    TrainTrack * startingTrack,
-    boost::signals2::signal<void ()> * inputLeavingSignal,
-    boost::signals2::signal<bool ()> * inputIsTrainTrackOccupiedSignal
+    int ID,
+    std::vector<int> route,
+    TrainTrack * startingTrack
+    ControlTowerFunctor * control
 )
 {
-    ID = InputID;
-    route = Route;
-    CurrentTrack = startingTrack;
-    leavingTrainTrackSignal = inputLeavingSignal;
-    wantToEnterTrainTrackSignal = inputIsTrainTrackOccupiedSignal;
-    progressAlongRoute = 0;
+    ID_ = ID;
+    route_ = route;
+    currentTrack_ = startingTrack;
+    control_ = control;
 
 }
 
@@ -39,27 +36,35 @@ void Train::StartDriveLoop(void)
         t.expires_after(boost::asio::chrono::seconds(1));
         t.wait();
 
+        CurrentTrack_ = CurrentTrack_->GetNextTrainTrack(route_);
+        route_.erase(route_.begin());
 
         bool isNextTrainTrackOccupied = true;
         while(isNextTrainTrackOccupied)
         {
-            // if call to signal2 WantToEnterNextTrain is false TODO
+            if (isTrainTrackOccupiedSignal_())
             {
                 t.expires_after(boost::asio::chrono::milliseconds(100));
                 t.wait();
             }
-            //else TODO
+            else
             {
                 isNextTrainTrackOccupied = false;
             }
         }
 
-
+        // Tell track we're leaving
         CurrentTrack->LeaveTrainTrack();
-        //Call signal2 HaveLeft TODO
-        CurrentTrack = CurrentTrack->GetNextTrainTrack(route[progressAlongRoute]);
-        progressAlongRoute++;
-        CurrentTrack->EnterTrainTracks(this); // Train may get deleted here if TrainTrack is a TrainInput
+
+        // Tell relevant trains that we're leaving
+        leavingSignal_();
+
+        // Tell control tower we're leaving and entering a new track
+        control_(CurrentTrackID, ID);
+
+        // Tell track we're entering
+        // Train may get deleted here if TrainTrack is a TrainInput
+        isNotDeleted = CurrentTrack->EnterTrainTracks(this);
     }
 }
 
