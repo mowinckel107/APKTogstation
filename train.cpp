@@ -26,7 +26,7 @@ void Train::start(void)
     t1.join();
 }
 
-void Train::startDriveLoop(void)
+int Train::startDriveLoop(void)
 {
     std::cout << "test1" << std::endl;
 
@@ -135,15 +135,18 @@ void Train::startDriveLoop(void)
 
         // Tell track we're entering
         // Train may get deleted here if TrainTrack is a TrainInput
-        if (!nextTrack->EnterTrainTracks(this) || !isNotDeleted_)
+        if (!nextTrack->EnterTrainTracks(this))
         {
             std::cout << "train: train was destroyed by input" << std::endl;
-            break;
         }
-        
-        std::cout << "train: remaining route: " << route_.size() << std::endl;
-        currentTrack_ = nextTrack;
+        else
+        {      
+            std::cout << "train: remaining route: " << route_.size() << std::endl;
+            currentTrack_ = nextTrack;
+        }
     }
+
+    return 0;
 }
 
 int Train::getID(void)

@@ -53,10 +53,9 @@ int TrainTrack::GetID(void)
 }
 
 
-
 bool TrainInput::EnterTrainTracks(Train* IncomingTrain)
 {
-    //delete IncomingTrain;
+    IncomingTrain->isNotDeleted_ = false;
     return false;
 }
 

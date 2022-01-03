@@ -32,7 +32,7 @@ class Train
 		
 		~Train();
 		void start(void);
-		void startDriveLoop(void);
+		int startDriveLoop(void);
 		int getID(void);
 
 		TrainFunctor trainFunctor_;
