@@ -2,14 +2,17 @@
 
 #include "controlTowerFunctor.h"
 #include "train.h"
+#include "railwaySystem.h"
 #include <iostream>
+#include <thread>
 
 
 void TestsOfCT1(void);
 void TestsOfTrain1(void);
 void TestOfTrack1(void);
 void TestsOfTrain2(void);
-void TestsOfCT2(void);
+void TestOfSystem1(void);
+void TestOfThreading1(void);
 
 void RunTests2()
 {   
@@ -20,6 +23,10 @@ void RunTests2()
     TestOfTrack1();
 
     TestsOfTrain2();
+
+    TestOfSystem1();
+
+    TestOfThreading1();    
 }
 
 // Does constructor run?
@@ -56,12 +63,46 @@ void TestsOfTrain2(void)
     std::cout << "TestsOfTrain2 passed: Does constructor run with a real track?" << std::endl;
 }
 
-// Test GetRouteAndSignals together with one train
-void TestsOfCT2(void)
+// Crashtest of railway system constructor
+void TestOfSystem1(void)
 {
+    // Tower
     ControlTowerFunctor Tower(false);
 
-    std::cout << "TestsOfCT2 passed" << std::endl;
+    // Railway system
+    RailwaySystem system;
+
+    // Get the first output track
+    TrainOutput * tto1p = &((system.trainOutputs)[0]);
+
+    // Train
+    Train train1(0, tto1p, &Tower);
+
+    // Success?
+    std::cout << "TestOfSystem1 passed: Crashtest of railway system constructor" << std::endl;
+}
+
+
+// Test threading as well as GetRouteAndSignals and startDriveLoop together with one train
+void TestOfThreading1(void)
+{
+    // Tower
+    ControlTowerFunctor Tower(false);
+
+    // Railway system
+    RailwaySystem system;
+
+    // Get the first output track
+    TrainOutput * tto1p = &((system.trainOutputs)[0]);
+
+    // Train
+    Train train1(0, tto1p, &Tower);
+
+    // Thread
+    train1.start();
+
+    // Success?
+    std::cout << "TestOfThreading1 passed: Test threading as well as GetRouteAndSignals together with one train" << std::endl;
 }
 
 

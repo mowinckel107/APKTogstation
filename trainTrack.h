@@ -13,6 +13,8 @@ class Train;
 class TrainTrack
 {
     public:
+        TrainTrack() {}
+
         TrainTrack(std::map<int, TrainTrack*> outgoingTraintracks, int uniqueTrainTrackID);
         TrainTrack* GetNextTrainTrack(int trainTrackNumber);
         virtual bool EnterTrainTracks(Train* IncomingTrain);
@@ -29,6 +31,8 @@ class TrainTrack
 class Platform : public TrainTrack
 {
     public:
+        Platform(){}
+
         Platform(std::map<int, TrainTrack*> outgoingTraintracks, int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
         {}
 };
@@ -37,6 +41,8 @@ class Platform : public TrainTrack
 class TrainInput : public TrainTrack
 {
     public:
+        TrainInput(){}
+
         TrainInput(std::map<int, TrainTrack*> outgoingTraintracks, int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
         {}
 
@@ -47,6 +53,8 @@ class TrainInput : public TrainTrack
 class TrainOutput : public TrainTrack
 {
     public:
+        TrainOutput(){}
+
         TrainOutput(std::map<int, TrainTrack*> outgoingTraintracks, int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
         {}
 };

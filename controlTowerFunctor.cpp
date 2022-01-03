@@ -4,6 +4,7 @@
 #include <boost/signals2.hpp>
 #include <boost/bind/bind.hpp>
 #include <functional>
+#include <iostream>
 
 ControlTowerFunctor::ControlTowerFunctor(bool managerMode)
 {
@@ -56,9 +57,12 @@ ControlTowerFunctor::ControlTowerFunctor(bool managerMode)
 TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrackID, int trainID, TrainFunctor * newTrainFunctor,  TrainTracker trainTracker)
 {
     // this is GetRouteAndSignals()
+    std::cout << "this is GetRouteAndSignals()" << std::endl;
 
     // 0) Save trainTracker
         trainTrackers_.insert(std::make_pair(trainID, trainTracker));
+
+        std::cout << "this is GetRouteAndSignals() 0 end" << std::endl;
 
     // 1) Pick a route
         static int routeCounter = 0;
@@ -81,6 +85,8 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
 
         // Choose route depending on starting track. Same as before, but more flexible.       
         data.route_ = myRoutes[routeCounter]; // copy, not move
+
+        std::cout << "this is GetRouteAndSignals() 1 end" << std::endl;
 
     // 2) Generate leavingSignal_ and isTrainTrackOccupiedSignal_
     // What happens now depends on if we're in managerMode. 
@@ -190,45 +196,64 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
             data.trainTrackConnections_ = std::move(loopTrainTrackConnections);
         }
 
+        std::cout << "this is GetRouteAndSignals() 2 end" << std::endl;
+
     // 3) Save this route
         trainRoutes_.insert(std::make_pair(trainID, data.route_));
+
+        std::cout << "this is GetRouteAndSignals() 3 end" << std::endl;
 
     // 4) Save tracks
         for (auto temp3 : data.route_)
         {
-            trackTrains_.find(temp3)->second.push_back(trainID);
-        }       
+            std::map<int, std::vector<int>>::iterator trackTrainsIt1 = trackTrains_.find(temp3);
 
-    // 6) Save train functor
+            if (trackTrainsIt1 == trackTrains_.end())
+            {
+                std::vector<int> trackTrain1 = {trainID};
+                trackTrains_.insert(std::make_pair(temp3, trackTrain1));
+                std::cout << "trackTrains_: added track " << temp3 << " with train " << trainID << std::endl;
+            }
+            else
+            {
+                trackTrainsIt1->second.push_back(trainID);
+                std::cout << "trackTrains_: added train " << trainID << " to track " << temp3 << std::endl;
+            }
+        }
+
+        std::cout << "this is GetRouteAndSignals() 4 end" << std::endl;
+
+    // 5) Save train functor
         trainFunctors_.insert(std::make_pair(trainID, newTrainFunctor));
+
+        std::cout << "this is GetRouteAndSignals() 5 end " << std::endl;
 
     return std::move(data);    
 }
 
-void ControlTowerFunctor::operator()(int trainTrackID, int trainID)
+void ControlTowerFunctor::operator()(int trainID)
 {
     // this is UpdateTrainCommunicationLeave and UpdateTrainCommunicationEnter in one, with some new features.
+
+    std::cout << "ControlTowerUpdater, trainID = " << trainID << std::endl;
 
     // Does route and train exist?
     if (trainRoutes_.find(trainID) == trainRoutes_.end())
     {
         throw "ControlTowerUpdater: Route could not be found using trainID";
     }
-    if (trackTrains_.find(trainTrackID) == trackTrains_.end())
-    {
-        throw "ControlTowerUpdater: Track could not be found using trainTrackID";
-    }
 
-    // Collect track information
+    // Find the route for this train
     std::vector<int> * route = &(trainRoutes_.find(trainID)->second);
-    std::vector<int> * trainsOnTrack = &(trackTrains_.find(trainTrackID)->second);
 
+    // Check route size
     int routeSize = route->size();
     if (routeSize == 0)
     {
         throw "ControlTowerUpdater: Train route is empty";
     }
-   
+
+    // Get the coming two track IDs
     int trackThatTrainIsEntering = route->at(0);
 
     int trackThatTrainWillEnterNext;
@@ -241,18 +266,37 @@ void ControlTowerFunctor::operator()(int trainTrackID, int trainID)
         trackThatTrainWillEnterNext = 0;
     }
 
-    // Delete information that we no longer need
+    // Is trackTrains_ OK?
+    if (trackTrains_.find(trackThatTrainIsEntering) == trackTrains_.end())
+    {
+        throw "ControlTowerUpdater: Track could not be found using trackThatTrainIsEntering";
+    }
+
+    std::cout << "testx1" << std::endl;
+
+    // Get trains on track that we're entering.
+    std::vector<int> * trainsOnTrack = &(trackTrains_.find(trackThatTrainIsEntering)->second);   
+
+    std::cout << "testx2" << std::endl;
+
+    // Remove the stop that we're entering from route
     route->erase(route->begin());
     routeSize--;
 
-    std::vector<int>::iterator ttIt1;
-    for (ttIt1 = trainsOnTrack->begin(); ttIt1 != trainsOnTrack->end(); ttIt1++)
+    std::cout << "testx3" << std::endl;    
+
+    // Erase train from the stop we're enterering
+    for (int i = 0; i < trainsOnTrack->size(); i++)
     {
-        if (*ttIt1 == trainID)
+        if (trainsOnTrack->at(i) == trainID)
         {
-            trainsOnTrack->erase(ttIt1);
+            std::cout << "testx3.1" << std::endl;
+            trainsOnTrack->erase(trainsOnTrack->begin()+i);
+            std::cout << "testx3.2" << std::endl;  
         }
     }
+
+    std::cout << "testx4" << std::endl;    
 
     // In manager mode, ControlTower does most of the work instead of train.
     if (managerMode_)
@@ -282,7 +326,7 @@ void ControlTowerFunctor::operator()(int trainTrackID, int trainID)
 
                 std::map<int, TrainFunctor *>::iterator trainFunctorIterator;
 
-                // Find correct functor via TrainTrackID
+                // Find correct functor
                 for (auto trainEntering : trainsEntering)
                 {
                     trainFunctorIterator = trainFunctors_.find(trainEntering);
@@ -290,8 +334,6 @@ void ControlTowerFunctor::operator()(int trainTrackID, int trainID)
                     // If train still exists
                     if(trainFunctorIterator != trainFunctors_.end())
                     {
-                        
-
                         // We connect the functor up to the boost:signal, but using boost::bind to fill in the arguments so they are not needed when calling the boost::signal
                         trainTrackerIterator->second.leavingSignal_->connect
                         (
@@ -345,9 +387,11 @@ void ControlTowerFunctor::operator()(int trainTrackID, int trainID)
     // If route has finished, remove train completely
     if (route->size() == 0)
     {
+        std::cout << "testx5" << std::endl;        
         trainFunctors_.erase(trainID);
         trainTrackers_.erase(trainID);
         trainRoutes_.erase(trainID);
+        std::cout << "testx6" << std::endl;
         return;
     }
 

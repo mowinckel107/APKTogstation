@@ -31,8 +31,9 @@ class Train
 		);
 		
 		~Train();
-		void StartDriveLoop(void);
-		int GetID(void);
+		void start(void);
+		void startDriveLoop(void);
+		int getID(void);
 
 		TrainFunctor trainFunctor_;
 		bool isNotDeleted_ = true;
