@@ -4,18 +4,18 @@
 #include "controlTowerFunctor.h"
 #include "railwaySystem.h"
 
-
 #include <vector>
 #include <iostream>
 
-#include "tests.h"
-
+//#include "tests.h"
+#include "tests2.h"
 
 int main()
 {
-    RunTests(); // Uncomment/Comment to run/not run the tests
+    RunTests2();
 
-    RailwaySystem myRailwaySystem;
+    //RunTests(); // Uncomment/Comment to run/not run the tests
+    //RailwaySystem myRailwaySystem;
 
     return 0;
 }

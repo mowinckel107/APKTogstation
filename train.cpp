@@ -11,7 +11,6 @@ Train::Train
     currentTrack_ = startingTrack;
     control_ = control;
     TrainFunctor trainFunctor_(ID_);
-
 }
 
 Train::~Train()
@@ -24,25 +23,47 @@ void Train::StartDriveLoop(void)
     boost::asio::io_context io;
     boost::asio::steady_timer t(io);
 
-    TrainTrack * nextTrack;
-    int nextTrackID = 0;
-    int currentTrackID = currentTrack_->GetID();
+    // Prepare to start drive loop
+        TrainTracker trainTracker;
+        trainTracker.leavingSignal_ = &leavingSignal_;
+        trainTracker.isTrainTrackOccupiedSignal_ = &isTrainTrackOccupiedSignal_;
 
+        TrainCommunicationAndRoute ctOutput = (*control_)(currentTrack_->GetID(), ID_, &trainFunctor_, trainTracker);
+
+        // Signals
+        leavingSignal_ = std::move(ctOutput.leavingSignal_);
+        isTrainTrackOccupiedSignal_ = std::move(ctOutput.isTrainTrackOccupiedSignal_);
+        birthSignal_ = std::move(ctOutput.birthSignal_);
+
+        // Functor
+        trainFunctor_(); // Clear train ID
+        trainFunctor_(std::move(ctOutput.trainTrackConnections_)); // Configure connection map
+
+    // Drive loop
     while(isNotDeleted_)
     {   
         // Delay
         t.expires_after(boost::asio::chrono::seconds(1));
         t.wait();
 
-        // We need a route
+        // Get current track ID
+        int currentTrackID = currentTrack_->GetID();
+
+        // Get next track
+        int nextTrackID;
         if (route_.size() > 0)
         {
             nextTrackID = route_.at(0);
         }
+        else
+        {
+            nextTrackID = 0;            
+        }
 
-        nextTrack = currentTrack_->GetNextTrainTrack(nextTrackID);
+        TrainTrack * nextTrack = currentTrack_->GetNextTrainTrack(nextTrackID);
         route_.erase(route_.begin());       
 
+        // Wait for permission
         bool isNextTrainTrackOccupied = true;
         while(isNextTrainTrackOccupied)
         {
@@ -73,7 +94,6 @@ void Train::StartDriveLoop(void)
             break;
         }
         currentTrack_ = nextTrack;
-
     }
 }
 

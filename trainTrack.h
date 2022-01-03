@@ -13,7 +13,7 @@ class Train;
 class TrainTrack
 {
     public:
-        TrainTrack(std::map<int, TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID);
+        TrainTrack(std::map<int, TrainTrack*> outgoingTraintracks, int uniqueTrainTrackID);
         TrainTrack* GetNextTrainTrack(int trainTrackNumber);
         virtual bool EnterTrainTracks(Train* IncomingTrain);
         void LeaveTrainTrack(void);
@@ -29,7 +29,7 @@ class TrainTrack
 class Platform : public TrainTrack
 {
     public:
-        Platform(std::map<int, TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
+        Platform(std::map<int, TrainTrack*> outgoingTraintracks, int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
         {}
 };
 
@@ -37,7 +37,7 @@ class Platform : public TrainTrack
 class TrainInput : public TrainTrack
 {
     public:
-        TrainInput(std::map<int, TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
+        TrainInput(std::map<int, TrainTrack*> outgoingTraintracks, int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
         {}
 
         bool EnterTrainTracks(Train* IncomingTrain);
@@ -47,7 +47,7 @@ class TrainInput : public TrainTrack
 class TrainOutput : public TrainTrack
 {
     public:
-        TrainOutput(std::map<int, TrainTrack*> outgoingTraintracks, unsigned int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
+        TrainOutput(std::map<int, TrainTrack*> outgoingTraintracks, int uniqueTrainTrackID) : TrainTrack(outgoingTraintracks, uniqueTrainTrackID)
         {}
 };
 

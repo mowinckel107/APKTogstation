@@ -53,9 +53,12 @@ ControlTowerFunctor::ControlTowerFunctor(bool managerMode)
     routes_.insert(std::make_pair(2, trainRouteForTrainOutput2));
 }
 
-TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrackID, int trainID, TrainFunctor * newTrainFunctor)
+TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrackID, int trainID, TrainFunctor * newTrainFunctor,  TrainTracker trainTracker)
 {
     // this is GetRouteAndSignals()
+
+    // 0) Save trainTracker
+        trainTrackers_.insert(std::make_pair(trainID, trainTracker));
 
     // 1) Pick a route
         static int routeCounter = 0;
@@ -77,7 +80,7 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
         TrainCommunicationAndRoute data;
 
         // Choose route depending on starting track. Same as before, but more flexible.       
-        data.route_ = myRoutes[routeCounter];
+        data.route_ = myRoutes[routeCounter]; // copy, not move
 
     // 2) Generate leavingSignal_ and isTrainTrackOccupiedSignal_
     // What happens now depends on if we're in managerMode. 
@@ -94,7 +97,6 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
 
             std::map<int, std::vector<boost::signals2::connection>> trainsAdded;
             std::vector<boost::signals2::connection> tempTrainAdded;
-
 
             TrainFunctor * tempFunctor;
             boost::signals2::connection c1;
@@ -131,7 +133,6 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
                     loopTrackConnections.clear();
 
                     tempTrains = trackTrains_[tempTrack];
-
 
                     // for every train driving through a track on the new trains route
                     for (int tempTrain : tempTrains)
@@ -177,7 +178,7 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
 
                             for (auto temp4 : tempTrainAdded)
                             {
-                                loopTrackConnections.push_back(temp4);
+                                loopTrackConnections.push_back(std::move(temp4));
                             }
                         }
                     }
@@ -186,7 +187,7 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
 
                 loopTrainTrackConnections.insert(std::make_pair(myIt1->first, loopTrainConnections));
             }
-            data.trainTrackConnections_ = loopTrainTrackConnections; // mov?
+            data.trainTrackConnections_ = std::move(loopTrainTrackConnections);
         }
 
     // 3) Save this route
@@ -201,8 +202,7 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
     // 6) Save train functor
         trainFunctors_.insert(std::make_pair(trainID, newTrainFunctor));
 
-
-    return data;    
+    return std::move(data);    
 }
 
 void ControlTowerFunctor::operator()(int trainTrackID, int trainID)

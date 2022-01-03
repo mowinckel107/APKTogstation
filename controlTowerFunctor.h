@@ -33,7 +33,7 @@ class ControlTowerFunctor
     public:
         ControlTowerFunctor(bool managerMode);
 
-        TrainCommunicationAndRoute operator()(int startingTrainTrackID, int TrainID, TrainFunctor * newTrainFunctor);
+        TrainCommunicationAndRoute operator()(int startingTrainTrackID, int TrainID, TrainFunctor * newTrainFunctor, TrainTracker trainTracker);
         void operator()(int TrainTrackID, int TrainID);
         
     private:
