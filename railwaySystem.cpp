@@ -5,86 +5,80 @@ RailwaySystem::RailwaySystem(void)
     // trainInput2 and trainInput1
     std::map<int, TrainTrack*> emptyListOfTrainTracksForTrainInput;
 
-    TrainInput trainInput1(emptyListOfTrainTracksForTrainInput, 30);
-    trainInputs.push_back(trainInput1);
+    trainInputs.push_back(TrainInput(emptyListOfTrainTracksForTrainInput, 30));
+    TrainInput * trainInput1 = &(trainInputs.back()); 
 
-    TrainInput trainInput2(emptyListOfTrainTracksForTrainInput, 31);
-    trainInputs.push_back(trainInput2);
-
+    trainInputs.push_back(TrainInput(emptyListOfTrainTracksForTrainInput, 31));
+    TrainInput * trainInput2 = &(trainInputs.back()); 
 
     // platform2
     std::map<int, TrainTrack*> ListOfTrainTracksForplatform2;
 
-    ListOfTrainTracksForplatform2.insert(std::make_pair(trainInput2.GetID(),&trainInput2));
-    ListOfTrainTracksForplatform2.insert(std::make_pair(trainInput1.GetID(),&trainInput1));
+    ListOfTrainTracksForplatform2.insert(std::make_pair(trainInput2->GetID(),trainInput2));
+    ListOfTrainTracksForplatform2.insert(std::make_pair(trainInput1->GetID(),trainInput1));
 
-    Platform platform2(ListOfTrainTracksForplatform2, 21);
-    platforms.push_back(platform2);
-
+    platforms.push_back(Platform(ListOfTrainTracksForplatform2, 21));
+    Platform * platform2 = &(platforms.back());
 
     // platform1
     std::map<int, TrainTrack*> ListOfTrainTracksForplatform1;
 
-    ListOfTrainTracksForplatform1.insert(std::make_pair(trainInput1.GetID(),&trainInput1));
+    ListOfTrainTracksForplatform1.insert(std::make_pair(trainInput1->GetID(),trainInput1));
 
-    Platform platform1(ListOfTrainTracksForplatform1, 20);
-    platforms.push_back(platform1);
+    platforms.push_back(Platform(ListOfTrainTracksForplatform1, 20));
+    Platform * platform1 = &(platforms.back());
 
 
     // trainTrack3
     std::map<int, TrainTrack*> ListOfTrainTracksFortrainTrack3;
 
-    ListOfTrainTracksFortrainTrack3.insert(std::make_pair(platform2.GetID(),&trainInput1));
-    ListOfTrainTracksFortrainTrack3.insert(std::make_pair(platform1.GetID(),&platform1));
+    ListOfTrainTracksFortrainTrack3.insert(std::make_pair(platform2->GetID(),trainInput1));
+    ListOfTrainTracksFortrainTrack3.insert(std::make_pair(platform1->GetID(),platform1));
 
-    TrainTrack trainTrack3(ListOfTrainTracksFortrainTrack3, 12);
-    trainTracks.push_back(trainTrack3);
+    trainTracks.push_back(TrainTrack(ListOfTrainTracksFortrainTrack3, 12));
+    TrainTrack * trainTrack3 = &(trainTracks.back());
 
 
     // trainTrack2
     std::map<int, TrainTrack*> ListOfTrainTracksFortrainTrack2;
 
-    ListOfTrainTracksFortrainTrack2.insert(std::make_pair(trainTrack3.GetID(),&trainTrack3));
-    ListOfTrainTracksFortrainTrack2.insert(std::make_pair(platform2.GetID(),&platform2));
+    ListOfTrainTracksFortrainTrack2.insert(std::make_pair(trainTrack3->GetID(),trainTrack3));
+    ListOfTrainTracksFortrainTrack2.insert(std::make_pair(platform2->GetID(),platform2));
 
-    TrainTrack trainTrack2(ListOfTrainTracksFortrainTrack2, 11);
-    trainTracks.push_back(trainTrack2);
-
+    trainTracks.push_back(TrainTrack(ListOfTrainTracksFortrainTrack2, 11));
+    TrainTrack * trainTrack2 = &(trainTracks.back());
 
     // trainTrack1
     std::map<int, TrainTrack*> ListOfTrainTracksFortrainTrack1;
 
-    ListOfTrainTracksFortrainTrack1.insert(std::make_pair(trainTrack3.GetID(),&trainTrack3));
+    ListOfTrainTracksFortrainTrack1.insert(std::make_pair(trainTrack3->GetID(),trainTrack3));
 
-    TrainTrack trainTrack1(ListOfTrainTracksFortrainTrack1, 10);
-    trainTracks.push_back(trainTrack1);
-
+    trainTracks.push_back(TrainTrack(ListOfTrainTracksFortrainTrack1, 10));
+    TrainTrack * trainTrack1 = &(trainTracks.back());
 
     // trainOutput3
     std::map<int, TrainTrack*> ListOfTrainTracksFortrainOutput3;
 
-    ListOfTrainTracksFortrainOutput3.insert(std::make_pair(trainTrack2.GetID(),&trainTrack2));
+    ListOfTrainTracksFortrainOutput3.insert(std::make_pair(trainTrack2->GetID(),trainTrack2));
 
-    TrainOutput trainOutput3(ListOfTrainTracksFortrainOutput3,2);
-    trainOutputs.push_back(trainOutput3);
-
+    trainOutputs.push_back(TrainOutput(ListOfTrainTracksFortrainOutput3,2));
+    TrainOutput * trainOutput3 = &(trainOutputs.back());
 
     // trainOutput2
     std::map<int, TrainTrack*> ListOfTrainTracksFortrainOutput2;
 
-    ListOfTrainTracksFortrainOutput2.insert(std::make_pair(trainTrack2.GetID(),&trainTrack2));
-    ListOfTrainTracksFortrainOutput2.insert(std::make_pair(trainTrack1.GetID(),&trainTrack1));
+    ListOfTrainTracksFortrainOutput2.insert(std::make_pair(trainTrack2->GetID(),trainTrack2));
+    ListOfTrainTracksFortrainOutput2.insert(std::make_pair(trainTrack1->GetID(),trainTrack1));
 
-    TrainOutput trainOutput2(ListOfTrainTracksFortrainOutput2,1);
-    trainOutputs.push_back(trainOutput2);
-
+    trainOutputs.push_back(TrainOutput(ListOfTrainTracksFortrainOutput2,1));
+    TrainOutput * trainOutput2 = &(trainOutputs.back());  
 
     // trainOutput1
     std::map<int, TrainTrack*> ListOfTrainTracksFortrainOutput1;
 
-    ListOfTrainTracksFortrainOutput1.insert(std::make_pair(trainTrack1.GetID(),&trainTrack1));
+    ListOfTrainTracksFortrainOutput1.insert(std::make_pair(trainTrack1->GetID(),trainTrack1));
 
-    TrainOutput trainOutput1(ListOfTrainTracksFortrainOutput1,0);
-    trainOutputs.push_back(trainOutput1);
+    trainOutputs.push_back(TrainOutput(ListOfTrainTracksFortrainOutput1,0));
+    TrainOutput * trainOutput1 = &(trainOutputs.back());    
 
 }
