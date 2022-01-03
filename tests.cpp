@@ -59,6 +59,9 @@ void TestsOfTrainTrack2(void)
 
     try
     {
+        // Control tower
+        ControlTowerFunctor Tower(false);
+
         // Step 1: Arrange
 
         // Give TrainTrack2 an empty map, as it leads to no other TrainTracks
@@ -74,7 +77,7 @@ void TestsOfTrainTrack2(void)
         std::vector<int> routeForMyTrain{2};
 
         // Create Train to use for exercising TrainTracks
-        Train myTrain(0, routeForMyTrain, nullptr, nullptr, nullptr);
+        Train myTrain(0, nullptr, &Tower);
 
         // Variable to hold pointer to nextTrainTrack instead of controlTower or train
         TrainTrack * nextTrainTrack;
@@ -104,6 +107,9 @@ void TestsOfTrainTrack3(void)
     // Test 3, Crashing 2 Trains together
     try
     {
+        // Control tower
+        ControlTowerFunctor Tower(false);
+
         // Step 1: Arrange
 
         // Give myTrainTrack an empty map, as it leads to no other TrainTracks
@@ -113,8 +119,8 @@ void TestsOfTrainTrack3(void)
         std::vector<int> EmptyTrainRoute;
 
         // Create Trains to use for exercising TrainTracks
-        Train myTrain1(0, EmptyTrainRoute, nullptr, nullptr, nullptr);
-        Train myTrain2(1, EmptyTrainRoute, nullptr, nullptr, nullptr);
+        Train myTrain1(0, nullptr, &Tower);
+        Train myTrain2(1, nullptr, &Tower);
 
         // Step 2: Act
 
@@ -151,16 +157,18 @@ void TestsOfTrain1(void)
         // Test 1, Creating train on TrainTrack
     try
     {
+        // Control tower
+        ControlTowerFunctor Tower(false);
+
         // Step 1: Arrange
         // Give TrainTrack an empty map, as it leads to no other TrainTracks
         std::map<int, TrainTrack*> emptyListOfTrainTracksForTrainTrack;
         TrainInput myTrainTrack(emptyListOfTrainTracksForTrainTrack, 0);
 
-
         // Step 2: Act
         // Create Train with an empty route
         std::vector<int> TrainRoute{};
-        Train myTrain(0, TrainRoute, &myTrainTrack, nullptr, nullptr);
+        Train myTrain(0, &myTrainTrack, &Tower);
     
         // Step 3: Assert
     }
@@ -177,6 +185,9 @@ void TestsOfTrain2(void)
     // Test 2, Running infinite loop
     try
     {
+        // Control tower
+        ControlTowerFunctor Tower(false);
+
         // Step 1: Arrange
             // Give TrainTrack2 an empty map, as it leads to no other TrainTracks
             std::map<int, TrainTrack*> emptyListOfTrainTracksForTrainTrack2;
@@ -190,7 +201,7 @@ void TestsOfTrain2(void)
 
             // Create Train with route on TrainTrack1
             std::vector<int> TrainRoute{2};
-            Train *myTrain = new Train(0, TrainRoute, &myTrainTrack1, nullptr, nullptr);
+            Train *myTrain = new Train(0, &myTrainTrack1, &Tower);
 
         // Step 2: Act
 

@@ -290,6 +290,7 @@ void ControlTowerFunctor::operator()(int trainTrackID, int trainID)
                     // If train still exists
                     if(trainFunctorIterator != trainFunctors_.end())
                     {
+                        
 
                         // We connect the functor up to the boost:signal, but using boost::bind to fill in the arguments so they are not needed when calling the boost::signal
                         trainTrackerIterator->second.leavingSignal_->connect
@@ -299,7 +300,7 @@ void ControlTowerFunctor::operator()(int trainTrackID, int trainID)
                             // https://www.boost.org/doc/libs/1_49_0/doc/html/signals2/tutorial.html#signals2.tutorial.connection-management
                             // https://stackoverflow.com/questions/10752844/signals-and-binding-arguments
                             leavingSignalBind(
-                                *(trainFunctorIterator->second),trainID,std::placeholders::_1
+                                *(trainFunctorIterator->second),trainID,boost::placeholders::_1
                             )
                         );                   
                     }
@@ -324,7 +325,7 @@ void ControlTowerFunctor::operator()(int trainTrackID, int trainID)
                             // https://stackoverflow.com/questions/10752844/signals-and-binding-arguments
                             isTrainOccupiedSignalBind
                             (
-                                *(trainFunctorIterator->second),true,std::placeholders::_1
+                                *(trainFunctorIterator->second),true,boost::placeholders::_1
                             )
                         );
                     }

@@ -12,7 +12,6 @@ using trainTrackConnectionMap = std::map<int, trackConnectionMap>;
 
 class TrainFunctor
 {
-
 private:
 	int reservedID_ = 0;
     int ownerTrainID_ = 0;
@@ -21,6 +20,8 @@ private:
     trainTrackConnectionMap trainTrackConnections_;
 
 public:
+    using result_type = bool;
+
     // Setup
     TrainFunctor(int ownerTrainID = 0);
 
@@ -43,9 +44,5 @@ public:
     bool operator()(int newTrainID, trackConnectionMap trackConnection);
 
 };
-
-typedef TrainFunctor::result_type bool;
-
-
 
 #endif /* TRAINFUNCTOR_H */

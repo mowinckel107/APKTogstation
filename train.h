@@ -26,7 +26,6 @@ class Train
         Train
 		(
 			int ID,
-			std::vector<int> route,
 			TrainTrack * startingTrack,
 			ControlTowerFunctor * control
 		);

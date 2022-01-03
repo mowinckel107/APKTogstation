@@ -3,13 +3,11 @@
 Train::Train
 (
     int ID,
-    std::vector<int> route,
     TrainTrack * startingTrack,
     ControlTowerFunctor * control
 )
 {
     ID_ = ID;
-    route_ = route;
     currentTrack_ = startingTrack;
     control_ = control;
     TrainFunctor trainFunctor_(ID_);
@@ -20,7 +18,7 @@ Train::~Train()
 {
     isNotDeleted_ = false;
 }
-    
+
 void Train::StartDriveLoop(void)
 {
     boost::asio::io_context io;

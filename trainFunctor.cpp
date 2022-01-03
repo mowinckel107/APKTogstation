@@ -5,8 +5,6 @@
 TrainFunctor::TrainFunctor(int ownerTrainID)
 {
     ownerTrainID_ = ownerTrainID;
-
-    return true;
 }
 
 // Clear reservation
