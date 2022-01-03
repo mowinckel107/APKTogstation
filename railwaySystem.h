@@ -5,16 +5,17 @@
 #include "trainTrack.h"
 #include <map>
 #include <vector>
+#include <array>
 
 class RailwaySystem
 {
     public:
     RailwaySystem(void);
 
-    std::vector<TrainTrack> trainTracks;
-    std::vector<Platform> platforms;
-    std::vector<TrainInput> trainInputs;
-    std::vector<TrainOutput> trainOutputs;
+    std::array<TrainTrack,30> trainTracks;
+    std::array<Platform,30> platforms;
+    std::array<TrainInput,30> trainInputs;
+    std::array<TrainOutput,30> trainOutputs;
 };
 
 
