@@ -32,22 +32,22 @@ void RunTests2()
 
     TestOfSystem1();
 
-    //TestOfThreading1();
+    TestOfThreading1();
 
-    TestOfThreading2();
+    //TestOfThreading2();
 }
 
 // Does constructor run?
 void TestsOfCT1(void)
 {
-    ControlTowerFunctor Tower(false);
+    ControlTowerFunctor Tower;
     std::cout << "TestsOfCT1 passed: Does constructor run?" << std::endl;
 }
 
 // Does constructor run with nullptr track?
 void TestsOfTrain1(void)
 {
-    ControlTowerFunctor Tower(false);
+    ControlTowerFunctor Tower;
     std::mutex mut;
     Train train1(0, nullptr, &Tower, &mut);
     std::cout << "TestsOfTrain1 passed: Does constructor run with nullptr track?" << std::endl;
@@ -67,7 +67,7 @@ void TestsOfTrain2(void)
     std::map<int, TrainTrack *> ttm1;
     TrainTrack tt1(ttm1, 0);
 
-    ControlTowerFunctor Tower(false);
+    ControlTowerFunctor Tower;
     std::mutex mut;
     Train train½(0, &tt1, &Tower, &mut);
     std::cout << "TestsOfTrain2 passed: Does constructor run with a real track?" << std::endl;
@@ -77,13 +77,13 @@ void TestsOfTrain2(void)
 void TestOfSystem1(void)
 {
     // Tower
-    ControlTowerFunctor Tower(false);
+    ControlTowerFunctor Tower;
 
     // Railway system
     RailwaySystem system;
 
     // Get the first output track
-    TrainOutput * tto1p = &((system.trainOutputs)[0]);
+    TrainOutput * tto1p = &(system.output1_);
 
     // Train
     std::mutex mut;
@@ -97,13 +97,13 @@ void TestOfSystem1(void)
 void TestOfThreading1(void)
 {
     // Tower
-    ControlTowerFunctor Tower(false);
+    ControlTowerFunctor Tower;
 
     // Railway system
     RailwaySystem system;
 
     // Get the first output track
-    TrainOutput * tto1p = &((system.trainOutputs)[0]);
+    TrainOutput * tto1p = &(system.output1_);
 
     // Train
     std::mutex mut;
@@ -123,15 +123,15 @@ void TestOfThreading2(void)
     std::mutex mut;
 
     // Tower
-    ControlTowerFunctor Tower(false);
+    ControlTowerFunctor Tower;
 
     // Railway system
     RailwaySystem system;
 
     // Get three output tracks
-    TrainOutput * tto1p0 = &((system.trainOutputs)[0]);
-    TrainOutput * tto1p1 = &((system.trainOutputs)[1]);
-    TrainOutput * tto1p2 = &((system.trainOutputs)[2]);
+    TrainOutput * tto1p0 = &(system.output1_);
+    TrainOutput * tto1p1 = &(system.output2_);
+    TrainOutput * tto1p2 = &(system.output3_);
 
     // Train
     Train train9(9, tto1p0, &Tower, &mut);

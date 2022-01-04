@@ -13,10 +13,17 @@ class RailwaySystem
     public:
     RailwaySystem(void);
 
-    std::array<TrainTrack,30> trainTracks;
-    std::array<Platform,30> platforms;
-    std::array<TrainInput,30> trainInputs;
-    std::array<TrainOutput,30> trainOutputs;
+    TrainTrack track1_;
+    TrainTrack track2_;
+    TrainTrack track3_;
+    Platform platform1_;
+    Platform platform2_;
+    TrainOutput output1_;
+    TrainOutput output2_;
+    TrainOutput output3_;    
+    TrainInput input1_;
+    TrainInput input2_;
+
 };
 
 

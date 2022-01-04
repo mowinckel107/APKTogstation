@@ -35,10 +35,6 @@ struct BoolCombOR
 typedef boost::signals2::signal<bool (int), BoolCombOR<bool>> occupiedSignalType;
 typedef occupiedSignalType::slot_type isTrainOccupiedSignalBind;
 
-using vectorOfConnections = std::vector<boost::signals2::connection>;
-using trackConnectionMap = std::map<int, vectorOfConnections>;
-using trainTrackConnectionMap = std::map<int, trackConnectionMap>;
-
 // Functor wrapper
 template <typename DATA, typename INPUT, typename OUTPUT, typename FUNCTORTYPE>
 struct FunctorWrapper
@@ -57,13 +53,13 @@ struct FunctorWrapper
 // Communication
 struct TrainCommunicationAndRoute
 {
-    occupiedSignalType isTrainTrackOccupiedSignal_;
     std::vector<int> route_;
 };
 
 struct TrainTracker
 {
     occupiedSignalType * isTrainTrackOccupiedSignal_;
+    int trainsConnectedCount_;
 };
 
 using RouteVector = std::vector<std::vector<int>>;

@@ -1,7 +1,6 @@
 #include "trainTrack.h"
 #include "common.h"
 #include <iostream>
-#include <sstream>
 
 TrainTrack::TrainTrack(std::map<int, TrainTrack*> outgoingTraintracks, int uniqueTrainTrackID)
 {
@@ -21,8 +20,11 @@ TrainTrack* TrainTrack::GetNextTrainTrack(int trainTrackNumber)
         }
         myIterator++;
     }
-    // If Train asked for a TrainTrack that did not exist
-    throw "A Train derailed";
+    
+    std::cout << "Something went wrong in GetNextTrainTrack. Try again." << std::endl;
+    return nullptr;
+    //std::cout << "Train " << TrainOnTrack->getID() << " derailed while trying to enter Track " <<  trainTrackNumber <<  " from Track " << GetID() << std::endl;
+    //throw "";
 }
 
 bool TrainTrack::EnterTrainTracks(Train* IncomingTrain)
@@ -30,9 +32,8 @@ bool TrainTrack::EnterTrainTracks(Train* IncomingTrain)
     // if a train is already on this traintrack
     if(!(TrainOnTrack == nullptr))
     {
-        std::ostringstream oss;
-        oss << "On Track " << GetID() << ", a train crashed into Train " << TrainOnTrack->getID();
-        throw oss.str();
+        std::cout << "Train " << TrainOnTrack->getID() << " was crashed into on Track " << GetID() << std::endl;
+        throw "";
     }
     else
     {
