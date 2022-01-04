@@ -40,9 +40,7 @@ class Train
 		TrainTrack * currentTrack_;
 		ControlTowerFunctor * control_;
 		std::vector<int> route_;
-    	leavingSignalType leavingSignal_;
     	occupiedSignalType isTrainTrackOccupiedSignal_;
-		birthSignalType birthSignal_;
 };
 
 #endif /* TRAIN_H */

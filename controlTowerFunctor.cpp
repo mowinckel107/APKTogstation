@@ -107,14 +107,11 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
 
             TrainFunctor * tempFunctor;
             boost::signals2::connection c1;
-            boost::signals2::connection c2;
-            boost::signals2::connection c3;
             std::map<int, TrainFunctor *>::iterator myIt1;
 
             // Connections representing one track relating to a train
             vectorOfConnections loopTrackConnections;
             trackConnectionMap loopTrainConnections;
-            trainTrackConnectionMap loopTrainTrackConnections;
 
             // for every train in existence
             for (myIt1 = trainFunctors_.begin(); myIt1 != trainFunctors_.end(); myIt1++)
@@ -150,30 +147,15 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
                             tempFunctor = trainFunctors_.find(tempTrain)->second;
 
                             // As we can't really pass the trackID, sig should be called as sig(int)
-                            // Bound to mode: Train {newTrain} has left track {unknownTrack}
-                            FunctorWrapper<int, int, bool, TrainFunctor> TW1(tempFunctor, trainID);
-
-                            c1 = data.leavingSignal_.connect(TW1);
-                            loopTrackConnections.push_back(c1);
-
-                            // As we can't really pass the trackID, sig should be called as sig(int)
                             // Bound to mode: Some train is requesting track {unknownTrack}
 
-                            FunctorWrapper<bool, int, bool, TrainFunctor> TW2(tempFunctor, true);
-                            c2 = data.isTrainTrackOccupiedSignal_.connect(TW2);
-                            loopTrackConnections.push_back(c2);
-
-                            // As we can't really pass the trackConnection, sig should be called as sig(trackConnectionMap)
-                            // Bound to mode: A new train has arrived, and it wants us to know every way it is connected to the existing train we belong to.
-                            FunctorWrapper<int, trackConnectionMap, bool, TrainFunctor> TW3(tempFunctor, trainID);
-                            //c3 = data.birthSignal_.connect(TW3);
-                            loopTrackConnections.push_back(c3);
+                            FunctorWrapper<bool, int, bool, TrainFunctor> TW1(tempFunctor, true);
+                            c1 = data.isTrainTrackOccupiedSignal_.connect(TW1);
+                            loopTrackConnections.push_back(c1);
 
                             // Save connections in trainsAdded. We'll need them for when this train shows up again.
                             tempTrainAdded.clear();
                             tempTrainAdded.push_back(c1);
-                            tempTrainAdded.push_back(c2);
-                            tempTrainAdded.push_back(c3);
 
                             trainsAdded.insert(std::make_pair(tempTrain, tempTrainAdded));
 
@@ -192,9 +174,8 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
                     loopTrainConnections.insert(std::make_pair(tempTrack, loopTrackConnections));
                 }
 
-                loopTrainTrackConnections.insert(std::make_pair(myIt1->first, loopTrainConnections));
+                trainTrackConnections_.insert(std::make_pair(myIt1->first, loopTrainConnections));
             }
-            data.trainTrackConnections_ = std::move(loopTrainTrackConnections);
         }
 
     // 3) Save this route

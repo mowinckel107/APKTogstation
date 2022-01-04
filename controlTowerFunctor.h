@@ -30,6 +30,7 @@ class ControlTowerFunctor
         std::map<int, std::vector<int>> trainRoutes_; // Train routes by train.
         std::map<int, std::vector<int>> trackTrains_; // Train by track (on a train route). Basically the opposite of trainRoutes_
         std::map<int, RouteVector> routes_;
+        trainTrackConnectionMap trainTrackConnections_;
 };
 
 #endif /* CONTROLTOWERFUNCTOR_H */

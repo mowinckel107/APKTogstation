@@ -18,12 +18,6 @@ Train::Train
     control_ = control;
 
     trainFunctor_ = TrainFunctor(ID_);
-
-    if (trainFunctor_(true, true))
-    {
-        std::cout << "Train" << ID_ << " constructor: Owner set" << std::endl;
-    }
-
     currentTrack_ = startingTrack;
 }
 
@@ -38,11 +32,6 @@ int Train::startDriveLoop()
 
     boost::asio::io_context io;
     boost::asio::steady_timer t(io);
-
-    if (!trainFunctor_(true, true))
-    {
-        std::cout << "Error in TrainFunctor " << ID_ << " : Owner not set" << std::endl;
-    }
 
     bool first_round = true;
 
@@ -69,19 +58,15 @@ int Train::startDriveLoop()
             // Feed trainTracker to control tower
             TrainTracker trainTracker;
 
-            trainTracker.leavingSignal_ = &leavingSignal_;
             trainTracker.isTrainTrackOccupiedSignal_ = &isTrainTrackOccupiedSignal_;
 
             TrainCommunicationAndRoute ctOutput = (*control_)(currentTrack_->GetID(), ID_, &trainFunctor_, trainTracker);
 
             // Signals
-            leavingSignal_ = std::move(ctOutput.leavingSignal_);
             isTrainTrackOccupiedSignal_ = std::move(ctOutput.isTrainTrackOccupiedSignal_);
-            birthSignal_ = std::move(ctOutput.birthSignal_);
 
             // Functor
             trainFunctor_(); // Clear reservation
-            trainFunctor_(std::move(ctOutput.trainTrackConnections_)); // Configure connection map
 
             // Route
             route_ = ctOutput.route_;
@@ -246,18 +231,6 @@ int Train::startDriveLoop()
                 
                 try
                 {
-                    // Tell relevant trains that we're leaving
-                    // segfaulter ...
-                    //leavingSignal_(currentTrackID);
-                }
-                catch (...)
-                {
-                    std::cout << "ERROR: leavingSignal_(currentTrackID);" << std::endl;
-                    return 0;
-                }
-
-                try
-                {
                     // Tell track we're entering
                     // Train may get deleted here if TrainTrack is a TrainInput
                     if (!nextTrack->EnterTrainTracks(this))
@@ -275,7 +248,7 @@ int Train::startDriveLoop()
                     std::cout << "ERROR: " << err << std::endl;
                     std::cout << "Train " << ID_ << " tried to swim in lava." << std::endl;
                     return 0;
-                }                
+                }
 
                 break;
             }
