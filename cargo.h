@@ -5,7 +5,7 @@
 #include <type_traits>
 
 // The "temperature" of the cargo
-// Frozen implies solid
+// Frozen implies solid.
 enum Temperature
 {
     temperate,

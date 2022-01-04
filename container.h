@@ -3,7 +3,7 @@
 
 // This Header file holds template for Container class
 // Container class holds cargo. Can only hold 1 Cargo at a time
-// Able to add and remove Cargo
+// Able to add and remove Cargo.
 
 #include "cargo.h"
 
