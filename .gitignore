@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+
+# Paths
+.vscode/
+.bin/
+.build/
