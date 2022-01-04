@@ -5,28 +5,14 @@
 #include <boost/bind/bind.hpp>
 #include "train.h"
 #include "trainFunctor.h"
+#include "common.h"
 #include <vector>
 #include <map>
+#include <thread>
+#include <mutex>
 
 // compiler seems to be weird with circular includes
 class Train;
-
-using RouteVector = std::vector<std::vector<int>>;
-
-struct TrainCommunicationAndRoute
-{
-    boost::signals2::signal<bool (int)> leavingSignal_;
-    boost::signals2::signal<bool (int)> isTrainTrackOccupiedSignal_;
-    boost::signals2::signal<bool (trackConnectionMap)> birthSignal_;
-    trainTrackConnectionMap trainTrackConnections_;
-    std::vector<int> route_;
-};
-
-struct TrainTracker
-{
-    boost::signals2::signal<bool (int)> * leavingSignal_;
-    boost::signals2::signal<bool (int)> * isTrainTrackOccupiedSignal_;
-};
 
 class ControlTowerFunctor
 {
@@ -37,6 +23,7 @@ class ControlTowerFunctor
         void operator()(int TrainID);
         
     private:
+        std::mutex mut_;
         bool managerMode_;
         std::map<int, TrainTracker> trainTrackers_; // references to train signals for use in manager mode
         std::map<int, TrainFunctor *> trainFunctors_; // train functors by train

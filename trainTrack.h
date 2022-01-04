@@ -2,6 +2,7 @@
 #define TRAINTRACK_H
 
 #include "train.h"
+#include "common.h"
 #include <map>
 #include <iterator>
 #include <string>

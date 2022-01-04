@@ -1,4 +1,5 @@
 #include "railwaySystem.h"
+#include "common.h"
 
 RailwaySystem::RailwaySystem(void)
 {
@@ -13,7 +14,7 @@ RailwaySystem::RailwaySystem(void)
     platforms.fill(dummyPlatform);
     trainTracks.fill(dummyTrack);
     trainInputs.fill(dummyInput);
-    trainOutputs.fill(dummyOutput);    
+    trainOutputs.fill(dummyOutput);  
 
     // trainInput2 and trainInput1
     trainInputs[1] = TrainInput(emptyMapOfTracks, 31);
@@ -72,7 +73,7 @@ RailwaySystem::RailwaySystem(void)
 
     ListOfTrainTracksFortrainOutput3.insert(std::make_pair(trainTrack2->GetID(),trainTrack2));
 
-    trainOutputs[2] = TrainOutput(ListOfTrainTracksFortrainOutput3,2);
+    trainOutputs[2] = TrainOutput(ListOfTrainTracksFortrainOutput3,3);
     TrainOutput * trainOutput3 = &(trainOutputs[2]);
 
     // trainOutput2
@@ -81,7 +82,7 @@ RailwaySystem::RailwaySystem(void)
     ListOfTrainTracksFortrainOutput2.insert(std::make_pair(trainTrack2->GetID(),trainTrack2));
     ListOfTrainTracksFortrainOutput2.insert(std::make_pair(trainTrack1->GetID(),trainTrack1));
 
-    trainOutputs[1] = TrainOutput(ListOfTrainTracksFortrainOutput2,1);
+    trainOutputs[1] = TrainOutput(ListOfTrainTracksFortrainOutput2,2);
     TrainOutput * trainOutput2 = &(trainOutputs[1]);  
 
     // trainOutput1
@@ -89,7 +90,7 @@ RailwaySystem::RailwaySystem(void)
 
     ListOfTrainTracksFortrainOutput1.insert(std::make_pair(trainTrack1->GetID(),trainTrack1));
 
-    trainOutputs[0] = TrainOutput(ListOfTrainTracksFortrainOutput1,0);
+    trainOutputs[0] = TrainOutput(ListOfTrainTracksFortrainOutput1,1);
     TrainOutput * trainOutput1 = &(trainOutputs[0]);    
 
 }

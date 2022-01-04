@@ -3,6 +3,7 @@
 
 
 #include "trainTrack.h"
+#include "common.h"
 #include <map>
 #include <vector>
 #include <array>

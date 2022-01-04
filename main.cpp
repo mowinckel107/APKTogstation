@@ -3,6 +3,7 @@
 #include "train.h"
 #include "controlTowerFunctor.h"
 #include "railwaySystem.h"
+#include "common.h"
 
 #include <vector>
 #include <iostream>

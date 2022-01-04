@@ -1,5 +1,6 @@
 #include "trainFunctor.h"
-
+#include "common.h"
+#include <iostream>
 
 // Setup
 TrainFunctor::TrainFunctor(int ownerTrainID)
@@ -10,14 +11,14 @@ TrainFunctor::TrainFunctor(int ownerTrainID)
 // Clear reservation
 bool TrainFunctor::operator()()
 {
-    reservedID_ = 0;
+    reservedID_ = -1;
 
     return true;
 }
 
 // Reserve track {trackID}
 bool TrainFunctor::operator()(int trackID)
-{
+{   
     reservedID_ = trackID;
 
     return true;    
@@ -75,4 +76,18 @@ bool TrainFunctor::operator()(int newTrainID, trackConnectionMap trackConnection
     trainTrackConnections_.insert ( std::pair<int, trackConnectionMap>(newTrainID, trackConnection) );
 
     return true;
+}
+
+// Debugging
+bool TrainFunctor::operator()(bool a, bool b)
+{
+    if (a && b)
+    {
+        return (ownerTrainID_ > 0);
+    }
+    else if (!a && !b)
+    {
+        return (reservedID_ > 0);
+    }
+    return false;
 }

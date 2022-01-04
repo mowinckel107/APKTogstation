@@ -1,18 +1,30 @@
 #include "train.h"
-
+#include "common.h"
 #include <iostream>
+#include <mutex>
+#include <string>
+#include <functional>
 
 Train::Train
 (
     int ID,
     TrainTrack * startingTrack,
-    ControlTowerFunctor * control
+    ControlTowerFunctor * control,
+    std::mutex * inmut
 )
 {
+    inmut_ = inmut;
     ID_ = ID;
-    currentTrack_ = startingTrack;
     control_ = control;
-    TrainFunctor trainFunctor_(ID_);
+
+    trainFunctor_ = TrainFunctor(ID_);
+
+    if (trainFunctor_(true, true))
+    {
+        std::cout << "Train" << ID_ << " constructor: Owner set" << std::endl;
+    }
+
+    currentTrack_ = startingTrack;
 }
 
 Train::~Train()
@@ -20,133 +32,267 @@ Train::~Train()
     isNotDeleted_ = false;
 }
 
-void Train::start(void)
+int Train::startDriveLoop()
 {
-    std::thread t1(&Train::startDriveLoop, this);
-    t1.join();
-}
-
-int Train::startDriveLoop(void)
-{
-    std::cout << "test1" << std::endl;
+    std::cout << "Train " << ID_ << " has been boomed into existence. Say hi! " << std::endl;
 
     boost::asio::io_context io;
     boost::asio::steady_timer t(io);
 
-    std::cout << "test2" << std::endl;
+    if (!trainFunctor_(true, true))
+    {
+        std::cout << "Error in TrainFunctor " << ID_ << " : Owner not set" << std::endl;
+    }
 
-    // Prepare to start drive loop
-        TrainTracker trainTracker;
-        std::cout << "test21" << std::endl;
+    bool first_round = true;
 
-        trainTracker.leavingSignal_ = &leavingSignal_;
-
-        std::cout << "test22" << std::endl;
-
-        trainTracker.isTrainTrackOccupiedSignal_ = &isTrainTrackOccupiedSignal_;
-
-        std::cout << "test23" << std::endl;
-
-        TrainCommunicationAndRoute ctOutput = (*control_)(currentTrack_->GetID(), ID_, &trainFunctor_, trainTracker);
-
-        std::cout << "test3" << std::endl;
-
-        // Signals
-        leavingSignal_ = std::move(ctOutput.leavingSignal_);
-        isTrainTrackOccupiedSignal_ = std::move(ctOutput.isTrainTrackOccupiedSignal_);
-        birthSignal_ = std::move(ctOutput.birthSignal_);
-
-        std::cout << "test4" << std::endl;
-
-        // Functor
-        trainFunctor_(); // Clear train ID
-        trainFunctor_(std::move(ctOutput.trainTrackConnections_)); // Configure connection map
-
-        std::cout << "test5" << std::endl;
-
-        // Route
-        route_ = std::move(ctOutput.route_);
+    std::unique_lock<std::mutex> ulock(*inmut_, std::defer_lock);
 
     // Drive loop
     while(isNotDeleted_)
-    {   
+    {
         // Delay
         t.expires_after(boost::asio::chrono::seconds(1));
         t.wait();
 
-        std::cout << "test6" << std::endl;
+        ulock.lock();
 
         // Get current track ID
         int currentTrackID = currentTrack_->GetID();
 
-        std::cout << "test7" << std::endl;
+        // Occupied flag
+        bool isNextTrainTrackOccupied;
+
+        // Prepare to start drive loop
+        if (first_round)        
+        {
+            // Feed trainTracker to control tower
+            TrainTracker trainTracker;
+
+            trainTracker.leavingSignal_ = &leavingSignal_;
+            trainTracker.isTrainTrackOccupiedSignal_ = &isTrainTrackOccupiedSignal_;
+
+            TrainCommunicationAndRoute ctOutput = (*control_)(currentTrack_->GetID(), ID_, &trainFunctor_, trainTracker);
+
+            // Signals
+            leavingSignal_ = std::move(ctOutput.leavingSignal_);
+            isTrainTrackOccupiedSignal_ = std::move(ctOutput.isTrainTrackOccupiedSignal_);
+            birthSignal_ = std::move(ctOutput.birthSignal_);
+
+            // Functor
+            trainFunctor_(); // Clear reservation
+            trainFunctor_(std::move(ctOutput.trainTrackConnections_)); // Configure connection map
+
+            // Route
+            route_ = ctOutput.route_;
+
+            // Now we wait.
+            isNextTrainTrackOccupied = true;
+            while (isNextTrainTrackOccupied)
+            {
+                try
+                {    
+                    isNextTrainTrackOccupied = isTrainTrackOccupiedSignal_(currentTrackID);
+                }
+                catch (...)
+                {
+                    std::cout << "ERROR: isNextTrainTrackOccupied = isTrainTrackOccupiedSignal_(currentTrackID);" << std::endl;
+                    return 0;
+                }
+
+                if (!isNextTrainTrackOccupied)
+                {
+                    std::cout << "Train " << ID_ << " has been allowed to drive into first track " << currentTrackID << ". Reserving." << std::endl;
+
+                    try
+                    {
+                        // Reserve new track                
+                        trainFunctor_(currentTrackID);
+                    }
+                    catch (...)
+                    {
+                        std::cout << "ERROR: trainFunctor_(nextTrackID);" << std::endl;
+                        return 0;
+                    }
+
+                    if (trainFunctor_(true, currentTrackID))
+                    {
+                        std::cout << "Train " << ID_ << " has reserved track " << currentTrackID << std::endl;
+                    }
+
+                    try
+                    {
+                        // Tell track we're entering
+                        // Train may get deleted here if TrainTrack is a TrainInput
+                        if (currentTrack_->EnterTrainTracks(this))
+                        {      
+                            std::cout << "Train " << ID_ << " has entered Track " << currentTrack_->GetID() << std::endl;
+                        }
+                    }
+                    catch (std::string err)
+                    {
+                        std::cout << "ERROR: " << err << std::endl;
+                        std::cout << "Train " << ID_ << " tried to swim in lava." << std::endl;
+                        return 0;
+                    }
+
+                    try
+                    {
+                        // Remove original track from list
+                        route_.erase(route_.begin());
+                    }
+                    catch (...)
+                    {
+                        std::cout << "ERROR: route_.erase(route_.begin());" << std::endl;
+                        return 0;                        
+                    }
+                    break;
+                }
+                
+                ulock.unlock();
+
+                t.expires_after(boost::asio::chrono::milliseconds(100));
+                t.wait();
+
+                ulock.lock();
+            }
+
+            ulock.unlock();
+            t.expires_after(boost::asio::chrono::seconds(1));
+            t.wait();
+            ulock.lock();
+
+            first_round = false;
+        }
 
         // Get next track
         int nextTrackID;
         if (route_.size() > 0)
         {
-            std::cout << "route size > 0 " << std::endl;
             nextTrackID = route_.at(0);
         }
         else
         {
-            std::cout << "route size 0 " << std::endl;
             nextTrackID = 0;            
         }
 
-        std::cout << "test8" << std::endl;
-
         TrainTrack * nextTrack = currentTrack_->GetNextTrainTrack(nextTrackID);
-        route_.erase(route_.begin());       
 
-        std::cout << "test9" << std::endl;
-
+        if (route_.size() > 0)
+        {
+            route_.erase(route_.begin());
+        }
+        
         // Wait for permission
-        bool isNextTrainTrackOccupied = true;
-        while(isNextTrainTrackOccupied)
+        isNextTrainTrackOccupied = true;
+        while(true)
         {
-            if (isTrainTrackOccupiedSignal_(nextTrackID))
-            {
-                t.expires_after(boost::asio::chrono::milliseconds(100));
-                t.wait();
+            try
+            {    
+                isNextTrainTrackOccupied = isTrainTrackOccupiedSignal_(nextTrackID);
             }
-            else
+            catch (...)
             {
-                isNextTrainTrackOccupied = false;
+                std::cout << "ERROR: isNextTrainTrackOccupied = isTrainTrackOccupiedSignal_(nextTrackID);" << std::endl;
+                return 0;
             }
+
+            if (!isNextTrainTrackOccupied)
+            {
+                try
+                {                
+                    // Tell track we're leaving
+                    currentTrack_->LeaveTrainTrack();
+                    std::cout << "Train " << ID_ << " left track " << currentTrackID << std::endl;
+                }
+                catch (...)
+                {
+                    std::cout << "ERROR: currentTrack_->LeaveTrainTrack();" << std::endl;
+                    return 0;
+                }
+
+                try
+                {
+                    // Tell our own functor that we're leaving
+                    trainFunctor_();
+                }
+                catch (...)
+                {
+                    std::cout << "ERROR: trainFunctor_();" << std::endl;
+                    return 0;
+                }        
+
+                try
+                {
+                    // Reserve new track                
+                    trainFunctor_(nextTrackID);
+                }
+                catch (...)
+                {
+                    std::cout << "ERROR: trainFunctor_(nextTrackID);" << std::endl;
+                    return 0;
+                }
+
+                try
+                {      
+                    // Tell control tower we're leaving and entering a new track
+                    (*control_)(ID_);
+                }
+                catch (...)
+                {
+                    std::cout << "ERROR: (*control_)(ID_);" << std::endl;
+                    return 0;
+                }  
+                
+                try
+                {
+                    // Tell relevant trains that we're leaving
+                    // segfaulter ...
+                    //leavingSignal_(currentTrackID);
+                }
+                catch (...)
+                {
+                    std::cout << "ERROR: leavingSignal_(currentTrackID);" << std::endl;
+                    return 0;
+                }
+
+                try
+                {
+                    // Tell track we're entering
+                    // Train may get deleted here if TrainTrack is a TrainInput
+                    if (!nextTrack->EnterTrainTracks(this))
+                    {
+                        std::cout << "Train " << ID_ << " has reached its final destination and was blown up by a Creeper. What a cruel fate." << std::endl;
+                    }
+                    else
+                    {      
+                        std::cout << "Train " << ID_ << " has entered Track " << nextTrack->GetID() << std::endl;
+                        currentTrack_ = nextTrack;
+                    }
+                }
+                catch (std::string err)
+                {
+                    std::cout << "ERROR: " << err << std::endl;
+                    std::cout << "Train " << ID_ << " tried to swim in lava." << std::endl;
+                    return 0;
+                }                
+
+                break;
+            }
+
+            ulock.unlock();
+
+            t.expires_after(boost::asio::chrono::milliseconds(100));
+            t.wait();
+
+            ulock.lock();
+
         }
 
-        std::cout << "test100" << std::endl;
-
-        // Tell track we're leaving
-        currentTrack_->LeaveTrainTrack();
-
-        std::cout << "test110" << std::endl;
-
-        // Tell relevant trains that we're leaving
-        leavingSignal_(currentTrackID);
-
-        std::cout << "test120" << std::endl;
-
-        // Tell control tower we're leaving and entering a new track
-        (*control_)(ID_);
-
-        std::cout << "test130" << std::endl;
-
-        // Tell track we're entering
-        // Train may get deleted here if TrainTrack is a TrainInput
-        if (!nextTrack->EnterTrainTracks(this))
-        {
-            std::cout << "train: train was destroyed by input" << std::endl;
-        }
-        else
-        {      
-            std::cout << "train: remaining route: " << route_.size() << std::endl;
-            currentTrack_ = nextTrack;
-        }
+        ulock.unlock();
     }
 
-    return 0;
+    return 1;
 }
 
 int Train::getID(void)
