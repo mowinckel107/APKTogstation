@@ -93,20 +93,6 @@ int Train::startDriveLoop()
                 // Track that we are trying to enter
                 trackThatWeAreTryingToEnterID = route_.at(0);
                 trackThatWeAreTryingToEnter = currentTrack_->GetNextTrainTrack(trackThatWeAreTryingToEnterID);
-
-                // Try again ..
-                if (trackThatWeAreTryingToEnter == nullptr)
-                {
-                    trackThatWeAreTryingToEnterID = route_.at(0);
-                    trackThatWeAreTryingToEnter = currentTrack_->GetNextTrainTrack(trackThatWeAreTryingToEnterID);                    
-                }
-
-                // Let train die
-                if (trackThatWeAreTryingToEnter == nullptr)
-                {
-                    std::cout << "Train " << ID_ << " was killed by a faulty computer program" << std::endl;
-                    return 0;
-                }
             }
 
             // Make sure that our signals are up to date
@@ -190,12 +176,15 @@ int Train::startDriveLoop()
                     {      
                         std::cout << "Train " << ID_ << " has entered Track " << trackThatWeAreTryingToEnterID << std::endl;
                     }
+
                 }
                 catch (...)
                 {
                     std::cout << "ERROR: Train " << ID_ << " tried to swim in lava." << std::endl;
                     throw "";
                 }
+
+                currentTrack_ = trackThatWeAreTryingToEnter;
 
                 // Tell control tower that we have entered. This will update our signal
                 try
@@ -211,13 +200,17 @@ int Train::startDriveLoop()
                 // Remove our now current track from route
                 try
                 {
-                    std::cout << "erased track " << route_.at(0) << " from train " << ID_ <<  ". Next up is " << ((route_.size() > 1) ? route_.at(1) : 0) << std::endl; 
                     route_.erase(route_.begin());
                 }
                 catch (...)
                 {
                     std::cout << "ERROR: route_.erase(route_.begin());" << std::endl;
                     return 0;                        
+                }
+
+                if (first_round)
+                {
+                    first_round = false;
                 }
 
                 break;
@@ -232,16 +225,12 @@ int Train::startDriveLoop()
             ulock.lock();
         }
 
-        if (first_round)
-        {
-            first_round = false;
-        }
-
-
         ulock.unlock();
     }
-
-    return 1;
+    
+    trainFunctor_();
+    std::cout << "Train " << ID_ << " was blown up, but don't worry, that is how things are supposed to be." << std::endl;
+    return 0;
 }
 
 int Train::getID(void)

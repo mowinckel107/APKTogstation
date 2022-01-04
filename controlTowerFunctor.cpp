@@ -98,8 +98,15 @@ TrainCommunicationAndRoute ControlTowerFunctor::operator()(int startingTrainTrac
 
             // As we can't really pass the trackID, sig should be called as sig(int)
             // Bound to mode: Some train is requesting track {unknownTrack}
-            FunctorWrapper<bool, int, bool, TrainFunctor> TW1(tempFunctor, true);
-            trainTrackers_.find(trainID)->second.isTrainTrackOccupiedSignal_->connect(TW1);            
+            //FunctorWrapper<bool, int, bool, TrainFunctor> TW1(std::ref(tempFunctor), true);
+            //trainTrackers_.find(trainID)->second.isTrainTrackOccupiedSignal_->connect(TW1);
+
+            trainTrackers_.find(trainID)->second.isTrainTrackOccupiedSignal_->connect(
+                isTrainOccupiedSignalBind
+                (
+                    std::ref(*tempFunctor),true,boost::placeholders::_1
+                )
+            );
         }
 
     // 3) Save this route
@@ -185,8 +192,15 @@ void ControlTowerFunctor::operator()(int trainID, int direction)
 
                     // As we can't really pass the trackID, sig should be called as sig(int)
                     // Bound to mode: Some train is requesting track {unknownTrack}
-                    FunctorWrapper<bool, int, bool, TrainFunctor> TW1(tempFunctor, true);
-                    boost::signals2::connection c1 = trainTracker->isTrainTrackOccupiedSignal_->connect(TW1);
+                    //FunctorWrapper<bool, int, bool, TrainFunctor> TW1(std::ref(tempFunctor), true);
+                    //boost::signals2::connection c1 = trainTracker->isTrainTrackOccupiedSignal_->connect(TW1);
+
+                    boost::signals2::connection c1 = trainTracker->isTrainTrackOccupiedSignal_->connect(
+                        isTrainOccupiedSignalBind
+                        (
+                            std::ref(*tempFunctor),true,boost::placeholders::_1
+                        )
+                    );                    
                 }
 
             }
@@ -246,27 +260,19 @@ void ControlTowerFunctor::operator()(int trainID, int direction)
         trainTracker->isTrainTrackOccupiedSignal_->disconnect_all_slots();
 
         // make sure we there is at least 1 more TrainTrack on the route
-        if(routeSize > 0)
+        if(routeSize > 1)
         {
-            std::map<int, std::vector<int>>::iterator trainsEnteringIt = trackTrains_.find(trackThatTrainIsEntering);
             std::map<int, std::vector<int>>::iterator trainsEnterNextIt = trackTrains_.find(trackThatTrainWillEnterNext);
 
-            if (trackTrains_.end() == trainsEnteringIt || trackTrains_.end() == trainsEnterNextIt)
+            if (trackTrains_.end() == trainsEnterNextIt)
             {
                 std::cout << "ERROR: ControlTowerUpdater: Tried to update signals even though there is no trackThatTrainWillEnterNext" << std::endl;
                 throw "";
             }
 
-            std::vector<int> trainsEntering = trainsEnteringIt->second;
             std::vector<int> trainsEnterNext = trainsEnterNextIt->second;
 
             std::map<int, TrainFunctor *>::iterator trainFunctorIterator;
-
-            // Not sure if we need anything here. Train will have permission to enter this track at this point, and reservation happens in train.
-            for (auto trainEntering : trainsEntering)
-            {
-                
-            }
 
             for (auto trainEnterNext : trainsEnterNext)
             {
@@ -283,7 +289,7 @@ void ControlTowerFunctor::operator()(int trainID, int direction)
                         // https://stackoverflow.com/questions/10752844/signals-and-binding-arguments
                         isTrainOccupiedSignalBind
                         (
-                            *(trainFunctorIterator->second),true,boost::placeholders::_1
+                            std::ref(*(trainFunctorIterator->second)),true,boost::placeholders::_1
                         )
                     );
                 }

@@ -4,7 +4,7 @@
 
 // Setup
 TrainFunctor::TrainFunctor(int ownerTrainID)
-{
+{   
     ownerTrainID_ = ownerTrainID;
 }
 
@@ -12,7 +12,6 @@ TrainFunctor::TrainFunctor(int ownerTrainID)
 bool TrainFunctor::operator()()
 {
     reservedID_ = -1;
-
     return true;
 }
 

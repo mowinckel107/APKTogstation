@@ -21,10 +21,8 @@ TrainTrack* TrainTrack::GetNextTrainTrack(int trainTrackNumber)
         myIterator++;
     }
     
-    std::cout << "Something went wrong in GetNextTrainTrack. Try again." << std::endl;
-    return nullptr;
-    //std::cout << "Train " << TrainOnTrack->getID() << " derailed while trying to enter Track " <<  trainTrackNumber <<  " from Track " << GetID() << std::endl;
-    //throw "";
+    std::cout << "Train " << TrainOnTrack->getID() << " derailed while trying to enter Track " <<  trainTrackNumber <<  " from Track " << GetID() << std::endl;
+    throw "";
 }
 
 bool TrainTrack::EnterTrainTracks(Train* IncomingTrain)

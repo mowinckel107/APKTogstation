@@ -34,7 +34,7 @@ void RunTests2()
 
     TestOfThreading1();
 
-    //TestOfThreading2();
+    TestOfThreading2();
 }
 
 // Does constructor run?
@@ -117,7 +117,7 @@ void TestOfThreading1(void)
     std::cout << "TestOfThreading1 passed: Test threading as well as GetRouteAndSignals together with one train" << std::endl;
 }
 
-// Test threading as well as GetRouteAndSignals and startDriveLoop together with one train
+// Test threading as well as GetRouteAndSignals and startDriveLoop together with many trains
 void TestOfThreading2(void)
 {
     std::mutex mut;
@@ -167,7 +167,7 @@ void TestOfThreading2(void)
     t8.join();
 
     // Success?
-    std::cout << "TestOfThreading1 passed: Test threading as well as GetRouteAndSignals together with one train" << std::endl;
+    std::cout << "TestOfThreading2 passed: Test threading as well as GetRouteAndSignals and startDriveLoop together with many trains" << std::endl;
 }
 
 
