@@ -31,7 +31,7 @@ public:
     bool operator()(bool isRequest, int trackID);
 
     // Debugging
-    bool operator()(bool a, bool b);
+    //bool operator()(bool a, bool b);
 
 };
 

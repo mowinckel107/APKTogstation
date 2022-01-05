@@ -17,6 +17,8 @@ class ControlTowerFunctor;
 class Train
 {
    public:
+		Train() {}
+
 		Train
 		(
 			int ID,
@@ -26,7 +28,6 @@ class Train
 		);
 		
 		~Train();
-		std::thread start(std::mutex * inmut);
 		int startDriveLoop();
 		int getID(void);
 

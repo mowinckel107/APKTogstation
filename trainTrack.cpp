@@ -1,5 +1,6 @@
 #include "trainTrack.h"
 #include "common.h"
+#include "controlTowerFunctor.h"
 #include <iostream>
 
 TrainTrack::TrainTrack(std::map<int, TrainTrack*> outgoingTraintracks, int uniqueTrainTrackID)
@@ -24,6 +25,7 @@ TrainTrack* TrainTrack::GetNextTrainTrack(int trainTrackNumber)
     std::cout << "Train " << TrainOnTrack->getID() << " derailed while trying to enter Track " <<  trainTrackNumber <<  " from Track " << GetID() << std::endl;
     throw "";
 }
+
 
 bool TrainTrack::EnterTrainTracks(Train* IncomingTrain)
 {
@@ -51,6 +53,17 @@ int TrainTrack::GetID(void)
     return ID;
 }
 
+bool Platform::EnterTrainTracks(Train* IncomingTrain)
+{
+    // Not implemented
+    return false;
+}
+
+bool Platform::HasUnloadedCargo(void)
+{
+    // Not implemented
+    return false;
+}
 
 bool TrainInput::EnterTrainTracks(Train* IncomingTrain)
 {
@@ -58,7 +71,12 @@ bool TrainInput::EnterTrainTracks(Train* IncomingTrain)
     return false;
 }
 
-
-
-
+// Couldn't get it to work
+/*
+void TrainOutput::EnterTrainTracks(Train * trainPtr, ControlTowerFunctor * ct, std::mutex * mut)
+{
+    *(trainPtr) = Train(TrainCounter, this, ct, mut);
+    TrainCounter++;
+}
+*/
 

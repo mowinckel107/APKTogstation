@@ -173,7 +173,7 @@ void ControlTowerFunctor::operator()(int trainID, int direction)
     // Leaving or just checking up
     if (direction <= 1)
     {
-        // Is this our last stop?
+        // Only if this is not our last stop
         if (routeSize > 1)
         {
             int tempTrack = route->at(1);
@@ -190,11 +190,8 @@ void ControlTowerFunctor::operator()(int trainID, int direction)
                 {
                     TrainFunctor * tempFunctor = trainFunctors_.find(tempTrain)->second;
 
-                    // As we can't really pass the trackID, sig should be called as sig(int)
-                    // Bound to mode: Some train is requesting track {unknownTrack}
-                    //FunctorWrapper<bool, int, bool, TrainFunctor> TW1(std::ref(tempFunctor), true);
-                    //boost::signals2::connection c1 = trainTracker->isTrainTrackOccupiedSignal_->connect(TW1);
-
+                    // typedef boost::signals2::signal<bool (int), SignalCombOr<bool(bool,bool)>>::slot_type isTrainOccupiedSignalBind
+                    // this uses boost::bind automatically
                     boost::signals2::connection c1 = trainTracker->isTrainTrackOccupiedSignal_->connect(
                         isTrainOccupiedSignalBind
                         (
@@ -300,7 +297,6 @@ void ControlTowerFunctor::operator()(int trainID, int direction)
                 }
             }
         }
-
 
     }
 

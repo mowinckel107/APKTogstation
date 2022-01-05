@@ -1,10 +1,9 @@
 #include "railwaySystem.h"
 #include "common.h"
+#include "cargo.h"
 
 RailwaySystem::RailwaySystem(void)
 {
-    // Fill arrays with dummy tracks
-    // Yes, this is dumb, but it's an easy way to probably not have pointers pointing at something wrong
     std::map<int, TrainTrack*> emptyMapOfTracks;
 
     // trainInput2 and trainInput1
@@ -73,12 +72,18 @@ RailwaySystem::RailwaySystem(void)
 
     output2_ = TrainOutput(ListOfTrainTracksFortrainOutput2,2);
     TrainOutput * trainOutput2 = &output2_;  
+
     // trainOutput1
     std::map<int, TrainTrack*> ListOfTrainTracksFortrainOutput1;
 
     ListOfTrainTracksFortrainOutput1.insert(std::make_pair(trainTrack1->GetID(),trainTrack1));
 
     output1_ = TrainOutput(ListOfTrainTracksFortrainOutput1,1);
-    TrainOutput * trainOutput1 = &output1_;    
+    TrainOutput * trainOutput1 = &output1_;
+
+    // Add outputs to vector
+    outputs_.push_back(trainOutput1);
+    outputs_.push_back(trainOutput2);
+    outputs_.push_back(trainOutput3);       
 
 }

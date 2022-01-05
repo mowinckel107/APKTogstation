@@ -36,6 +36,8 @@ typedef boost::signals2::signal<bool (int), BoolCombOR<bool>> occupiedSignalType
 typedef occupiedSignalType::slot_type isTrainOccupiedSignalBind;
 
 // Functor wrapper
+// Retired
+/*
 template <typename DATA, typename INPUT, typename OUTPUT, typename FUNCTORTYPE>
 struct FunctorWrapper
 {
@@ -49,6 +51,7 @@ struct FunctorWrapper
         return (*func_)(data_, input);
     }
 };
+*/
 
 // Communication
 struct TrainCommunicationAndRoute

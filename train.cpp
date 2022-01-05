@@ -29,10 +29,10 @@ int Train::startDriveLoop()
 {
     std::cout << "Train " << ID_ << " has been boomed into existence. Say hi! " << std::endl;
 
+    bool first_round = true;
+
     boost::asio::io_context io;
     boost::asio::steady_timer t(io);
-
-    bool first_round = true;
 
     std::unique_lock<std::mutex> ulock(*inmut_, std::defer_lock);
 

@@ -39,6 +39,7 @@ bool TrainFunctor::operator()(bool isRequest, int trackID)
 }
 
 // Debugging
+/*
 bool TrainFunctor::operator()(bool a, bool b)
 {
     if (a && b)
@@ -51,3 +52,4 @@ bool TrainFunctor::operator()(bool a, bool b)
     }
     return false;
 }
+*/
