@@ -16,6 +16,7 @@ void trainFunc(Train &myTrain)
     myTrain.startDriveLoop();
 }
 
+/*
 struct NineTrains
 {
     Train train1_;
@@ -43,6 +44,7 @@ struct NineTrains
         trains_.push_back(&train9_);
     }
 };
+*/
 
 int main()
 {
