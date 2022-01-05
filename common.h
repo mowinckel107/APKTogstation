@@ -30,8 +30,6 @@ struct BoolCombOR
 	}
 };
 
-// https://stackoverflow.com/questions/10752844/signals-and-binding-arguments
-// Generate slot types for slots so that we can have placeholder argyments
 typedef boost::signals2::signal<bool (int), BoolCombOR<bool>> occupiedSignalType;
 typedef occupiedSignalType::slot_type isTrainOccupiedSignalBind;
 

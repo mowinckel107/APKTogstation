@@ -282,8 +282,6 @@ void ControlTowerFunctor::operator()(int trainID, int direction)
                     (
                         // typedef boost::signals2::signal<bool (int), SignalCombOr<bool(bool,bool)>>::slot_type isTrainOccupiedSignalBind
                         // this uses boost::bind automatically
-                        // https://www.boost.org/doc/libs/1_49_0/doc/html/signals2/tutorial.html#signals2.tutorial.connection-management
-                        // https://stackoverflow.com/questions/10752844/signals-and-binding-arguments
                         isTrainOccupiedSignalBind
                         (
                             std::ref(*(trainFunctorIterator->second)),true,boost::placeholders::_1
